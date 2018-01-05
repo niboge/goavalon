@@ -1,0 +1,29 @@
+vendor/
+.vscode/
+.*.un~
+*.data
+*.db
+favicon.ico
+
+#############
+## Python
+#############
+
+*.py[co]
+
+# Packages
+*.egg
+*.egg-info
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+
+# web
+wxapp/node_modules/
+wxapp/*.js
+wxapp/dist/
