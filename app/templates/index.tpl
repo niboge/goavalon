@@ -9,7 +9,7 @@
 
 
 <div>
-	什么:
+	轮播图:
 	<div>
 		{{range $k, $v := .data.game_slogn}}
 			-{{$v}}</br>

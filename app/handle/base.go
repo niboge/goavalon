@@ -10,14 +10,26 @@ import (
 
 
 type BaseSt struct {
-    // return http-client
     Data Object
 }
 
-func (this *BaseSt) Fail(msg string, code int) {
+func (this *BaseSt) setRetCode(code int) {
+    this.Data["code"] = code
+}
+
+func (this *BaseSt) Fail(msg interface{}) (Object){
     this.Data["data"] = Object{}
     this.Data["msg"] = msg
-    this.Data["code"] = code
+    this.Data["code"] = -1
+    
+    return this.Data
+}
+
+func (this *BaseSt) Succ(data Object) (Data Object){
+    this.Data["data"] = data
+    this.Data["msg"] = ""
+    this.Data["code"] = 0
+    return this.Data
 }
 
 func (this *BaseSt) IsAjax() bool {

@@ -35,7 +35,6 @@ func Router(router *gin.Engine) {
 		c.String(http.StatusOK, "Hello w Word")
 	})
 
-
 	router.GET("/index", handle.Index.Main)
 }
 

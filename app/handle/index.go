@@ -13,13 +13,13 @@ import (
 var Index IndexSt
 
 func init(){
-    Index = IndexSt{Info:"[圣杯战争] [刺客练刀房] [莫甘娜演技培训班] [神民] [叫嚣全场狼美人] [叫嚣的忠臣奥博伦]"}
+    Index = IndexSt{"[圣杯战争] [刺客练刀房] [莫甘娜演技培训班] [神民] [叫嚣全场狼美人] [忠臣假跳炸奥博伦]", BaseSt{Object{}} }
 }
 
 /**
     Hanlde: Index Class
 **/
-type IndexSt struct { 
+type IndexSt struct {
     Info string
     BaseSt;
 }
@@ -28,9 +28,12 @@ type IndexSt struct {
 
 // main page
 func (this *IndexSt) Main(context *gin.Context){
-    panic(" 测试啊 ")
-    defer func() { 
-        if err := recover(); err != nil {log.Print("[Warning] ", err)}
+    defer func() {
+        if err := recover(); err != nil {
+            log.Print("[Error] ", err)
+            context.HTML(http.StatusInternalServerError, "index.tpl", this.Fail(err))
+            return 
+        }
     }()
     
     var data = Object{
@@ -39,13 +42,8 @@ func (this *IndexSt) Main(context *gin.Context){
         "players" : "玩家",
         "game" : "game",
     }
-    
 
-    context.HTML(http.StatusOK, "index.tpl", gin.H{
-        "msg": "成功",
-        "data": data,
-        "code": 0,
-    })
+    context.HTML(http.StatusOK, "index.tpl", this.Succ(data))
 }
 
 func (this *IndexSt) Self() string{
