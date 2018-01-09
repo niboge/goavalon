@@ -1,3 +1,6 @@
+.Ds_Store
+
+
 vendor/
 .vscode/
 .*.un~

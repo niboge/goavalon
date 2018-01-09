@@ -6,13 +6,30 @@ import (
 	. "fmt"
 	"reflect"
 	"avalon/app/handle"
+
+	"github.com/astaxie/beego/orm"
+	"github.com/astaxie/beego"
+    _ "github.com/go-sql-driver/mysql"
 )
+
+const PROJECT_NAME = 'avalon'
+
+func init() {
+	// config
+    beego.AppConfigPath = "avalon/app/conf/db.conf"
+    beego.ParseConfig()
+
+    Printf("%V",beego.AppConfig)
+	// orm
+	orm.RegisterDataBase(PROJECT_NAME, "mysql", "root:xiaobaitu2@/time.geekbang.org?charset=utf8")
+    orm.RunSyncdb(PROJECT_NAME, false, true)
+}
 
 func main() {
 	// gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 
-	// 加载模板
+	// 加载模板 todo 一次不行么
 	r.LoadHTMLGlob("app/templates/**/*.tpl")
 	r.LoadHTMLGlob("app/templates/*.tpl")	
 
@@ -28,65 +45,8 @@ func main() {
 
 func Router(router *gin.Engine) {
 	router.GET("/", func(c *gin.Context) {
-		// c.JSON(200, gin.H{
-		// 	"message": "hi",
-		// })
-		Printf("%v %T \n", gin.H{}, gin.H{})
 		c.String(http.StatusOK, "Hello w Word")
 	})
 
 	router.GET("/index", handle.Index.Main)
 }
-
-
-
-/*
-import (
-	"net/http"
-
-	"avalon/conf"
-	"avalon/db"
-	"avalon/handle"
-	"avalon/middleware"
-
-	"github.com/beatrichartz/martini-sockets"
-	"github.com/go-martini/martini"
-)
-
-func main() {
-
-	m := martini.Classic()
-	config := conf.CreateConfig("./config/config.yaml")
-	ConfigMartini(m, config)
-	RouterConfig(m)
-	m.Run()
-}
-
-func ConfigMartini(m *martini.ClassicMartini, config *conf.Config) *martini.ClassicMartini {
-	orm := db.SetEngine(config.DataBase.DbPath)
-	// 初始化用户表	
-	orm.Sync(new(db.User))
-	sessionManager := middleware.GetSessionManager(7200)
-	// 配置DATABASES
-	m.Map(orm)
-	// 全局配置信息
-	m.Map(config)
-	// 全局Wxssion管理器
-	m.Map(sessionManager)
-	// handle.GetChat()
-
-	return m
-}
-
-func RouterConfig(m *martini.ClassicMartini) {
-	m.Get("/", func() string {
-		return "hello,word"
-	})
-	// m.Get("/login", handle.LoginWechatUser)
-	m.Get("/login", func (req *http.Request) (int, string) {
-		return 200, "hello, word"
-		})
-	m.Post("/registerUser", handle.RegisterWechatUser)
-	m.Get("/game/room/:name", sockets.JSON(handle.Message{}), handle.ResistSocket)
-}
-*/

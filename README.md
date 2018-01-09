@@ -1,6 +1,10 @@
 # 抵抗组织狼人杀小游戏后端
-## build with Glide martini go-xorm
-todo someting
+## build with gin&&beego
+
+## start
+1 conf
+2 nohup
+
 ## How To buld
 `glide install`
 
