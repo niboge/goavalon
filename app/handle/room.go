@@ -76,7 +76,7 @@ func (room *Room) AddClient(clientName string, client *Client) bool {
 	// 通知其他用户发送
 	joinMsg := &Message{From: "SYSTEM", EventName: "JOIN"}
 	joinMsg.UserInfo.NickName = client.UserInfo.NickName
-	joinMsg.UserInfo.AvatarURL = client.UserInfo.AvatarURL
+	joinMsg.UserInfo.Avatar = client.UserInfo.Avatar
 	room.BroadcastMessage(joinMsg, client)
 	if len(room.ClientNameList()) < room.RoomSize-1 {
 		room.Clients[clientName] = client // 加入房间的客户端池

@@ -11,13 +11,13 @@ func ResistGameHandle(room *Room, msg *Message, cli *Client) {
 	case "CHAT":
 		chatMsg := &Message{From: cli.Name, Body: msg.Body, EventName: "CHAT"}
 		chatMsg.UserInfo.NickName = cli.UserInfo.NickName
-		chatMsg.UserInfo.AvatarURL = cli.UserInfo.AvatarURL
+		chatMsg.UserInfo.Avatar = cli.UserInfo.Avatar
 		room.BroadcastMessage(chatMsg, cli)
 	// 演讲
 	case "SPEECH":
 		chatMsg := &Message{From: cli.Name, Body: msg.Body, EventName: "SPEECH"}
 		chatMsg.UserInfo.NickName = cli.UserInfo.NickName
-		chatMsg.UserInfo.AvatarURL = cli.UserInfo.AvatarURL
+		chatMsg.UserInfo.Avatar = cli.UserInfo.Avatar
 		room.BroadcastMessage(chatMsg, cli)
 		speecher := room.TakeTurnsClientName()
 		// 选择投票任务是否选择
@@ -31,7 +31,7 @@ func ResistGameHandle(room *Room, msg *Message, cli *Client) {
 			// 选取下一位演讲者
 			choiceNextSpeecher := &Message{From: "SYSTEM", EventName: "SPEECHER"}
 			speechCli := room.GetClientByName(speecher)
-			choiceNextSpeecher.UserInfo.AvatarURL = speechCli.UserInfo.AvatarURL
+			choiceNextSpeecher.UserInfo.Avatar = speechCli.UserInfo.Avatar
 			choiceNextSpeecher.UserInfo.NickName = speechCli.UserInfo.NickName
 			room.BroadcastAll(choiceNextSpeecher)
 		}
@@ -139,7 +139,7 @@ func ResistGameHandle(room *Room, msg *Message, cli *Client) {
 		userList := []RoomUserInfo{}
 		room.Lock()
 		for _, cli := range room.Clients {
-			roomUserInfo := RoomUserInfo{cli.Name, cli.UserInfo.NickName, cli.UserInfo.AvatarURL}
+			roomUserInfo := RoomUserInfo{cli.Name, cli.UserInfo.NickName, cli.UserInfo.Avatar}
 			userList = append(userList, roomUserInfo)
 		}
 		room.Unlock()

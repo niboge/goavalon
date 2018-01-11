@@ -1,12 +1,13 @@
 package handle
 
 import (
-	"avalon/db"
+	"github.com/astaxie/beego/orm"
+	"avalon/app/model"
 )
 
 type Client struct {
 	Name      string // 客户端链接的名字，这里一般为3rdsession的字符串
-	UserInfo  db.User
+	UserInfo  model.UserSt
 	in        <-chan *Message // 传进来的消息管道
 	out       chan<- *Message // 发出去的消息管道
 	done      <-chan bool     // 结束的bool
@@ -17,7 +18,7 @@ type Client struct {
 type RoomUserInfo struct {
 	Name      string `json:"name"`
 	NickName  string `json:"nickName"`
-	AvatarUrl string `json:"avatarUrl"`
+	Avatar string `json:"Avatar"`
 }
 
 type Message struct {
@@ -30,7 +31,7 @@ type Message struct {
 	} `json:"roleInfo"`
 	UserInfo struct {
 		NickName  string `json:"nickName"`
-		AvatarURL string `json:"avatarUrl"`
+		Avatar string `json:"Avatar"`
 	} `json:"userInfo"`
 	UserList []RoomUserInfo `json:"userList"`
 	TeamSize int            `json:"teamSize"`

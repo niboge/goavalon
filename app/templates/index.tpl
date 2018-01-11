@@ -15,6 +15,9 @@
 			-{{$v}}</br>
 		{{end}}
 	</div>
+
+	我的信息:
+	<tr>{{.data.info}}</tr>
 </div>
 
 </html>

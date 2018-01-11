@@ -3,9 +3,10 @@ package handle
 import (
 	"sync"
 
-	"net/http"
-	"avalon/db"
 	"avalon/plugin"
+	"github.com/astaxie/beego/orm"
+	"avalon/app/model"
+	"net/http"
 
 	"github.com/go-martini/martini"
 )
@@ -56,7 +57,7 @@ func ResistSocket(req *http.Request, params martini.Params, recevier <-chan *Mes
 	roomName := params["name"]
 	info, ok := session.Get("userInfo")
 	if ok == true {
-		userInfo := info.(db.User)
+		userInfo := info.(model.UserSt)
 		cli := Client{Name: sessionKey, UserInfo: userInfo, in: recevier, out: sender, done: done, err: err, diconnect: disconnect}
 		room := chat.GetRoomByName(roomName)
 		if room == nil {
@@ -65,7 +66,7 @@ func ResistSocket(req *http.Request, params martini.Params, recevier <-chan *Mes
 		room.AddClient(sessionKey, &cli)
 		addMsg := &Message{From: sessionKey, EventName: "Join", Body: ""}
 		addMsg.UserInfo.NickName = cli.UserInfo.NickName
-		addMsg.UserInfo.AvatarURL = cli.UserInfo.AvatarURL
+		addMsg.UserInfo.Avatar = cli.UserInfo.Avatar
 		room.BroadcastMessage(addMsg, &cli)
 		for {
 			select {
@@ -80,7 +81,7 @@ func ResistSocket(req *http.Request, params martini.Params, recevier <-chan *Mes
 				msg := &Message{From: sessionKey, EventName: "Disconnect",
 					Body: " "}
 				msg.UserInfo.NickName = cli.UserInfo.NickName
-				msg.UserInfo.AvatarURL = cli.UserInfo.AvatarURL
+				msg.UserInfo.Avatar = cli.UserInfo.Avatar
 				room.BroadcastMessage(msg, &cli)
 				return 200, "ok"
 			}

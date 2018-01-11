@@ -2,24 +2,62 @@ package model
 
 
 import (
-    "github.com/astaxie/beego/orm"
+    "github.com/astaxie/beego"
+    Orm "github.com/astaxie/beego/orm"
+    _ "github.com/go-sql-driver/mysql"
+
+    . "fmt"
 )
 
-type User struct {
-    Id      int
-    Name    string
-    Profile *Profile `orm:"rel(one)"` // OneToOne relation
-}
-
-type Profile struct {
-    Id   int
-    Age  int16
-    User *User `orm:"reverse(one)"` // 设置反向关系(可选)
-}
+var User *UserSt
 
 func init() {
-    // 需要在init中注册定义的model
+    User = new(UserSt)
+    Orm.RegisterModel(User)
+}
 
-    orm.RegisterModel(new(User), new(Profile))
+type UserSt struct {
+    Id      int
+    Account string
+    NickName string
+    Avatar string
+    Pwd string
+    Mobile string
+    Score int
+    Win int
+    Lose int
+    // Profile *Profile `orm:"rel(one)"` // OneToOne relation
+}
 
+func (this *UserSt) TableName() string {
+    return "user"
+}
+
+func (this *UserSt) FindFirst(cond interface{}) interface{}{
+    var obj UserSt
+    switch t := cond.(type) {
+    case int:
+        obj = UserSt{Id:cond.(int)}
+        if err := orm.Read(&obj, "Id"); err != nil {
+            return false
+        }
+    case string:
+        where := cond.(string)
+        
+    default:
+        where := cond["where"]
+        limit := cond["limit"]
+        Printf("%V %V \n",where,limit)
+    }
+
+    return obj
+}
+
+func (this *UserSt) Save(cond interface{}) (int , error) {
+    user := new(UserSt)
+    user.NickName = "海波"
+    id, err := orm.Insert(user)
+    Printf("%V %V \n", id , err)
+
+    return int(id), err
 }

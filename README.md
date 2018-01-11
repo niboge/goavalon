@@ -27,7 +27,7 @@
       }
       userInfo:{
           nickName: "客户端对应的用户名称"
-          AvatarURL: "用户头像"
+          Avatar: "用户头像"
       }
       UserList: [{userInfo}] // 用户列表 
       TeamSize // 组队可选人数
