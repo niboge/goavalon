@@ -5,10 +5,13 @@ import (
     Orm "github.com/astaxie/beego/orm"
     _ "github.com/go-sql-driver/mysql"
 
-    . "fmt"
+    // . "fmt"
 )
 
 var orm Orm.Ormer
+
+type Base struct{
+}
 
 func Register() {
     // db init
@@ -17,4 +20,9 @@ func Register() {
     err := Orm.RegisterDataBase("default", "mysql", beego.AppConfig.String("db_mysql"))
     orm = Orm.NewOrm()
     orm.Using("default")
+}
+
+func (this *Base)baseFindFirst(cond interface{}) interface{} {
+    // return this.FindFirst()
+    return true
 }

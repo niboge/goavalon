@@ -2,11 +2,13 @@ package model
 
 
 import (
-    "github.com/astaxie/beego"
+    // "github.com/astaxie/beego"
     Orm "github.com/astaxie/beego/orm"
     _ "github.com/go-sql-driver/mysql"
 
     . "fmt"
+
+    . "avalon/plugin/selftype"
 )
 
 var User *UserSt
@@ -17,6 +19,7 @@ func init() {
 }
 
 type UserSt struct {
+    Base
     Id      int
     Account string
     NickName string
@@ -34,6 +37,8 @@ func (this *UserSt) TableName() string {
 }
 
 func (this *UserSt) FindFirst(cond interface{}) interface{}{
+    res := this.baseFindFirst(cond)
+
     var obj UserSt
     switch t := cond.(type) {
     case int:
@@ -45,12 +50,14 @@ func (this *UserSt) FindFirst(cond interface{}) interface{}{
         where := cond.(string)
         
     default:
-        where := cond["where"]
-        limit := cond["limit"]
+        conds := cond.(Object)
+        where := conds["where"]
+        limit := conds["limit"]
         Printf("%V %V \n",where,limit)
     }
-
+    
     return obj
+
 }
 
 func (this *UserSt) Save(cond interface{}) (int , error) {
