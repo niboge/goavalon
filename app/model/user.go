@@ -40,7 +40,7 @@ func (this *UserSt) FindFirst(cond interface{}) interface{}{
     res := this.baseFindFirst(cond)
 
     var obj UserSt
-    switch t := cond.(type) {
+    switch cond.(type) {
     case int:
         obj = UserSt{Id:cond.(int)}
         if err := orm.Read(&obj, "Id"); err != nil {

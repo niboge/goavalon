@@ -4,7 +4,7 @@ import (
 	. "fmt"
 	"github.com/gin-gonic/gin"
 	"log"
-	"net/http"
+	// "net/http"
 	Str "strings"
 
 	"avalon/app/model"
@@ -15,7 +15,7 @@ import (
 var Index IndexSt
 
 func init() {
-	Index = IndexSt{"[圣杯战争] [刺客练刀房] [莫甘娜演技培训班] [神民] [叫嚣全场狼美人] [忠臣假跳炸奥博伦]", BaseSt{Object{}}}
+	Index = IndexSt{"[圣杯战争] [刺客练刀房] [莫甘娜演技培训班] [神民] [叫嚣全场狼美人] [忠臣假跳炸奥博伦]", BaseSt{Data:Object{}, c:nil}}
 }
 
 /**
@@ -31,8 +31,7 @@ func (this *IndexSt) Main(context *gin.Context) {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Print("[Error] ", err)
-			context.HTML(http.StatusInternalServerError, "index.tpl", this.Fail(err))
-			return
+			this.fail(Sprintf("%s", err))
 		}
 	}()
 
@@ -49,7 +48,7 @@ func (this *IndexSt) Main(context *gin.Context) {
 		"info": user,
 	}
 
-	context.HTML(http.StatusOK, "index.tpl", this.Succ(data))
+	this.succ(data,"index.tpl")
 }
 
 func (this *IndexSt) Self() string {

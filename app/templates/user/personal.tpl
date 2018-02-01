@@ -1,11 +1,14 @@
-{include file="widget/nav.tpl"}
+{{ define "user/personal.tpl" }}
 
-<h2>用户信息</h2>
+<h3>用户信息</h3>
 
-<h4>账户名: {$user.account}</h4>
-<h4>昵称: {$user.nick_name}</h4>
-<h4>积分: {$user.score}</h4>
-<h4>胜场: {$user.win}</h4>
-<h4>负场: {$user.lose}</h4>
+<h5>账户名: {{.data.account}}</h5>
+<h5>昵称: {{.data.nick}}</h5>
+<h5>积分: {{.data.score}}</h5>
+<h5>胜场: {{.data.win}}</h5>
+<h5>负场: {{.data.lose}}</h5>
+<h5>胜率: {{.data.winrate}}</h5>
 
-<h3>底部</h3>
+<h4>底部</h4>
+
+{{ end }}

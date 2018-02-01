@@ -24,5 +24,5 @@ func Register() {
 
 func (this *Base)baseFindFirst(cond interface{}) interface{} {
     // return this.FindFirst()
-    return true
+    return cond
 }
