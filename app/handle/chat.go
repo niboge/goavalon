@@ -13,7 +13,7 @@ import (
 
 type Chat struct {
 	sync.Mutex
-	Rooms map[string]*Room
+	Rooms map[string]*RoomSt
 }
 
 var chat *Chat
@@ -22,13 +22,13 @@ var once sync.Once
 // NewChat ...
 func GetChat() *Chat {
 	once.Do(func() {
-		chat = &Chat{sync.Mutex{}, map[string]*Room{}}
+		chat = &Chat{sync.Mutex{}, map[string]*RoomSt{}}
 	})
 	return chat
 }
 
 // (chat *Chat) GetRoomByName ...
-func (chat *Chat) GetRoomByName(roomName string) *Room {
+func (chat *Chat) GetRoomByName(roomName string) *RoomSt {
 	chat.Lock()
 	defer chat.Unlock()
 	room, ok := chat.Rooms[roomName]
@@ -40,7 +40,7 @@ func (chat *Chat) GetRoomByName(roomName string) *Room {
 }
 
 // AddRoom ...
-func (chat *Chat) AddRoom(roomName string, room *Room) {
+func (chat *Chat) AddRoom(roomName string, room *RoomSt) {
 	chat.Lock()
 	defer chat.Unlock()
 	chat.Rooms[roomName] = room

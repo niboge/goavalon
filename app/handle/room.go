@@ -4,9 +4,22 @@ import (
 	"container/list"
 	"math/rand"
 	"sync"
+
+	"github.com/gin-gonic/gin"
+	"avalon/app/model"
+	. "avalon/plugin/selftype"
+
+	"log"
+	. "fmt"
 )
 
-type Room struct {
+var Room RoomSt
+
+func init() {
+	Room = RoomSt{BaseSt:BaseSt{Data:Object{}, c:nil}, Mutex:sync.Mutex{}}
+}
+
+type RoomSt struct {
 	sync.Mutex                       // 互斥锁，保证线程安全
 	Stash         string             //状态
 	RoomSize      int                // 房间人数
@@ -19,13 +32,31 @@ type Room struct {
 	AgrVote       *VoteSet           // 赞成票仓
 	Captains      []string           // 队长链表
 	Clients       map[string]*Client // 客户端管理池
+	BaseSt
 }
 
-func CreteRoom(roomName string, roomSize int) *Room {
+func (this *RoomSt) Main(context *gin.Context) {
+	// defer func() {
+	// 	if err := recover(); err != nil {
+	// 		log.Print("[Error] ", err)
+	// 		this.fail(Sprintf("%s", err))
+	// 	}
+	// }()
+
+	rooms := model.Room.Find(true)
+	if rooms == nil{
+		panic("no  room")
+	}
+
+
+	this.succ(rooms,"room.tpl")
+}
+
+func CreteRoom(roomName string, roomSize int) *RoomSt {
 	dismissVote := NewVote()   // 反对票仓
 	agreeVote := NewVote()     // 同意票仓
 	turnTalkList := list.New() // 轮流发言链表
-	room := Room{
+	room := RoomSt{
 		Mutex:         sync.Mutex{},
 		Name:          roomName,
 		DisVote:       dismissVote,
@@ -38,7 +69,7 @@ func CreteRoom(roomName string, roomSize int) *Room {
 }
 
 // 初始化游戏信息
-func (room *Room) InitRoomGame() {
+func (room *RoomSt) InitRoomGame() {
 	// 随机选择队长
 	captaignsName, _ := room.TakeRandCaptains()
 
@@ -70,7 +101,7 @@ func (room *Room) InitRoomGame() {
 }
 
 // 添加房间客户端
-func (room *Room) AddClient(clientName string, client *Client) bool {
+func (room *RoomSt) AddClient(clientName string, client *Client) bool {
 	room.Lock()
 	defer room.Unlock()
 	// 通知其他用户发送
@@ -110,7 +141,7 @@ func (room *Room) AddClient(clientName string, client *Client) bool {
 }
 
 // 删除房间的客户端
-func (room *Room) RemoveClient(clientName string) {
+func (room *RoomSt) RemoveClient(clientName string) {
 	room.Lock()
 	defer room.Unlock()
 	delete(room.Clients, clientName)
@@ -134,7 +165,7 @@ func (room *Room) RemoveClient(clientName string) {
 }
 
 // 清空房间票仓
-func (room *Room) ClearVoteSet() {
+func (room *RoomSt) ClearVoteSet() {
 	room.Lock()
 	defer room.Unlock()
 	room.DisVote.Clear()
@@ -142,21 +173,21 @@ func (room *Room) ClearVoteSet() {
 }
 
 // 投同意票
-func (room *Room) VoteAgreeVote(clientName string) {
+func (room *RoomSt) VoteAgreeVote(clientName string) {
 	room.Lock()
 	defer room.Unlock()
 	room.AgrVote.Add(clientName)
 }
 
 // 投反对票
-func (room *Room) VoteDisVote(clientName string) {
+func (room *RoomSt) VoteDisVote(clientName string) {
 	room.Lock()
 	defer room.Unlock()
 	room.DisVote.Add(clientName)
 }
 
 // 统计投票数，参数为模式，mission(任务执行模式)|team(组队模式) 返回如果味true则同意多，如果为fale则反对多,
-func (room *Room) CountVote(modle string) (bool, bool) {
+func (room *RoomSt) CountVote(modle string) (bool, bool) {
 	room.Lock()
 	defer room.Unlock()
 	agrvotes := room.AgrVote.Len()
@@ -179,7 +210,7 @@ func (room *Room) CountVote(modle string) (bool, bool) {
 }
 
 // 获取所有投票数，第一个为同意第二个为反对
-func (room *Room) GetVotes() (int, int) {
+func (room *RoomSt) GetVotes() (int, int) {
 	room.Lock()
 	defer room.Unlock()
 	agrvotes := room.AgrVote.Len()
@@ -187,7 +218,7 @@ func (room *Room) GetVotes() (int, int) {
 	return agrvotes, disvotes
 }
 
-func (room *Room) GetMissionConfig() int {
+func (room *RoomSt) GetMissionConfig() int {
 	room.Lock()
 	defer room.Unlock()
 	switch room.RoomSize {
@@ -206,7 +237,7 @@ func (room *Room) GetMissionConfig() int {
 }
 
 // 增加局数
-func (room *Room) AddGameNum() bool {
+func (room *RoomSt) AddGameNum() bool {
 	room.Lock()
 	defer room.Unlock()
 	if room.GameNum < 5 {
@@ -218,7 +249,7 @@ func (room *Room) AddGameNum() bool {
 }
 
 // 获取轮流发言客户端名字
-func (room *Room) TakeTurnsClientName() string {
+func (room *RoomSt) TakeTurnsClientName() string {
 	room.Lock()
 	defer room.Unlock()
 	cliNmae := room.TurnsTalkList.Front()
@@ -227,7 +258,7 @@ func (room *Room) TakeTurnsClientName() string {
 }
 
 // 随机获取队长
-func (room *Room) TakeRandCaptains() (string, bool) {
+func (room *RoomSt) TakeRandCaptains() (string, bool) {
 	room.Lock()
 	defer room.Unlock()
 	if len(room.Captains) != 0 {
@@ -243,7 +274,7 @@ func (room *Room) TakeRandCaptains() (string, bool) {
 }
 
 // 增加好人获胜局数
-func (room *Room) AddGoodManWins() bool {
+func (room *RoomSt) AddGoodManWins() bool {
 	room.Lock()
 	defer room.Unlock()
 	if room.GoodManWins < 3 && room.GoodManWins+room.BadGuysWins < 5 {
@@ -255,7 +286,7 @@ func (room *Room) AddGoodManWins() bool {
 }
 
 // 增加坏人获胜局数
-func (room *Room) AddBadGuysWins() bool {
+func (room *RoomSt) AddBadGuysWins() bool {
 	room.Lock()
 	defer room.Unlock()
 	if room.BadGuysWins < 3 && room.GoodManWins+room.BadGuysWins < 5 {
@@ -267,7 +298,7 @@ func (room *Room) AddBadGuysWins() bool {
 }
 
 // 客户端名字列表
-func (room *Room) ClientNameList() []string {
+func (room *RoomSt) ClientNameList() []string {
 	room.Lock()
 	defer room.Unlock()
 	list := []string{}
@@ -278,7 +309,7 @@ func (room *Room) ClientNameList() []string {
 }
 
 // 给房间所有人发送消息
-func (room *Room) BroadcastMessage(msg *Message, client *Client) {
+func (room *RoomSt) BroadcastMessage(msg *Message, client *Client) {
 	room.Lock()
 	defer room.Unlock()
 	for _, cli := range room.Clients {
@@ -288,7 +319,7 @@ func (room *Room) BroadcastMessage(msg *Message, client *Client) {
 	}
 }
 
-func (room *Room) BroadcastAll(msg *Message) {
+func (room *RoomSt) BroadcastAll(msg *Message) {
 	room.Lock()
 	defer room.Unlock()
 	for _, cli := range room.Clients {
@@ -297,8 +328,8 @@ func (room *Room) BroadcastAll(msg *Message) {
 
 }
 
-// (room *Room) SendMessage ...
-func (room *Room) SendMessage(msg *Message, clientName string) {
+// (room *RoomSt) SendMessage ...
+func (room *RoomSt) SendMessage(msg *Message, clientName string) {
 	room.Lock()
 	defer room.Unlock()
 	msg.From = clientName
@@ -307,13 +338,13 @@ func (room *Room) SendMessage(msg *Message, clientName string) {
 }
 
 // ChangeRoomStash ...
-func (room *Room) ChangeRoomStash(stash string) {
+func (room *RoomSt) ChangeRoomStash(stash string) {
 	room.Lock()
 	defer room.Unlock()
 	room.Stash = stash
 }
 
-func (room *Room) GetClientByName(name string) *Client {
+func (room *RoomSt) GetClientByName(name string) *Client {
 	room.Lock()
 	defer room.Unlock()
 	cli := room.Clients[name]

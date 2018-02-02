@@ -54,7 +54,7 @@ func Session() {
 
 func Route(router *gin.Engine) {
 	// 加载模板
-	router.LoadHTMLGlob("app/templates/**/*")
+	router.LoadHTMLGlob("app/templates/**/*.tpl")
 
 	// 静态文件
 	router.StaticFile("/favicon.ico", "./public/favicon.ico")
@@ -75,6 +75,12 @@ func Route(router *gin.Engine) {
 	group = router.Group("/user", middelware(&handle.User))
 	{
 		group.GET("", handle.User.Info)
+	}
+
+	// room
+	group = router.Group("/room", middelware(&handle.Room))
+	{
+		group.GET("/", handle.Room.Main)
 	}
 }
 

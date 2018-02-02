@@ -5,7 +5,7 @@ import (
 )
 
 // 游戏主流程
-func ResistGameHandle(room *Room, msg *Message, cli *Client) {
+func ResistGameHandle(room *RoomSt, msg *Message, cli *Client) {
 	switch msg.EventName {
 	// 聊天
 	case "CHAT":

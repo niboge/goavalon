@@ -35,7 +35,7 @@ func (this *BaseSt) BeforeHandle(c *gin.Context) {
 			"manu":   "4321",
 		})
 
-		user,_ := c.GetQuery(gin.AuthUserKey).(string)
+		user,_ := c.GetQuery(gin.AuthUserKey)
 		if secret, ok := secrets[user]; ok {
 			c.JSON(http.StatusOK, Object{"user": user, "secret": secret})
 		} else {
@@ -63,11 +63,11 @@ func (this *BaseSt) fail(msg interface{}) {
 	}
 }
 
-func (this *BaseSt) succ(data Object, tpl_name string) {
+func (this *BaseSt) succ(data interface{}, tpl_name string) {
 	this.Data["data"] = data
 	this.Data["msg"] = ""
 
-	fmt.Printf("\n%V\n",this.Data["code"])
+	fmt.Printf("\n INFO: %V\n", data)
 
 	this.Data["code"] = 0
 
