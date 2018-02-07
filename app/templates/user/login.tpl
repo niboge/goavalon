@@ -1,4 +1,5 @@
-{include file="widget/nav.tpl"}
+{{define "login.tpl"}}
+{{template "nav.tpl"}}
 
 <div class="panel-heading">
     <form class="form-horizontal" role="form" method="post">
@@ -31,3 +32,4 @@
         </div>
     </form>
 </div>
+{{end}}

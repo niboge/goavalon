@@ -1,4 +1,5 @@
 {{ define "room.tpl" }}
+{{template "nav.tpl" }}
 
 <div class="container">
     <div class="jumbotron">

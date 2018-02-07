@@ -5,7 +5,7 @@
 <!-- * Time: 下午5:29-->
 <!-- */-->
 
-{include file="widget/nav.tpl"}
+<!-- {include file="widget/nav.tpl"} -->
 
 <form method="post" class="form-group">
 	<div>

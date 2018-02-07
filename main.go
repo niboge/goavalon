@@ -57,6 +57,7 @@ func Route(router *gin.Engine) {
 	router.LoadHTMLGlob("app/templates/**/*.tpl")
 
 	// 静态文件
+	router.Static("/public", "./public")
 	router.StaticFile("/favicon.ico", "./public/favicon.ico")
 
 	router.GET("/room/saber", func(c *gin.Context){ WebsocketLoop(c.Writer, c.Request)} )

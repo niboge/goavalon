@@ -1,9 +1,10 @@
-{include file="widget/head.tpl"}
+{{define "nav.tpl"}}
+{{template "head.tpl" }}
 
 <ul class="nav nav-pills nav-justified">
     <li class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown">
-        tokyo时区测试:{php}echo date('Y-m-d H:i:s');{/php} &nbsp;&nbsp;&nbsp;我 <span class="caret"></span>
+        tokyo时区测试:<script>document.write(Date().substr(8,16))</script> &nbsp;&nbsp;&nbsp;我 <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
             <li><a href="/user/home">个人中心</a></li>
@@ -17,16 +18,16 @@
 
 <ul class="nav nav-pills nav-justified">
     <li><a href="/">首页</a></li>
-    <li {*class="active">*}><a href="/room/index">桌游</a></li>
+    <li><a href="/room/index">桌游</a></li>
     <li><a href="/doc/ss">SS服务</a></li>
-    {*todo跳转写的这么艰辛*}
-    <li><a href=javascript:window.location.href='http://'+_HOST >空间站</a></li>
-</ul><br><br><br>
+    <li><a href="javascript:window.location.href='http://'+_HOST" >空间站</a></li>
+    {{/*todo跳转写的这么艰辛*/}}
+</ul>
+<br>
 
 
-<!-- {include file="widget/nav.tpl"}
 
-
+{{/*
 <div id="canvas_placeholder">
     {if $data == 'STATIC_RULE_AVALON'}
        <font>【规则】阿瓦隆规则 
@@ -94,4 +95,6 @@
 -                       　　卡牌之三：具有特殊功能的卡牌，都是在亚瑟王传说中有名有姓的人物，包括圣骑士派西维尔（帕西瓦尔）、梅林、奥伯伦（梅林他爸）、刺客（坏蛋最后的希望、莫德雷德和莫甘娜（摩根）。其中梅林和刺客是每次游戏都必须带的，其他角色可根据需要添加。充满了特色的人物使得《阿瓦隆》相比《抵抗组织》要好玩不少。
                </font>
     {/if}
-</div> -->
+</div> */}}
+
+{{end}}

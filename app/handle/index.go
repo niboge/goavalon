@@ -15,7 +15,7 @@ import (
 var Index IndexSt
 
 func init() {
-	Index = IndexSt{"[圣杯战争] [刺客练刀房] [莫甘娜演技培训班] [神民] [叫嚣全场狼美人] [忠臣假跳炸奥博伦]", BaseSt{Data:Object{}, c:nil}}
+	Index = IndexSt{"[圣杯战争] [刺客练刀房] [莫甘娜演技培训班] [神民推理爆炸] [狼美人叫嚣全场] [忠臣跳奥博伦]", BaseSt{Data:Object{}, c:nil}}
 }
 
 /**
