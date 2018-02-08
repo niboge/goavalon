@@ -1,7 +1,7 @@
 package handle
 
 import (
-	"github.com/astaxie/beego/orm"
+	// "github.com/astaxie/beego/orm"
 	"avalon/app/model"
 )
 

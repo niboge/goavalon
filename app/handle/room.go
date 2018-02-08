@@ -9,8 +9,8 @@ import (
 	"avalon/app/model"
 	. "avalon/plugin/selftype"
 
-	"log"
-	. "fmt"
+	// "log"
+	// . "fmt"
 )
 
 var Room RoomSt

@@ -37,7 +37,7 @@ func (this *UserSt) TableName() string {
 }
 
 func (this *UserSt) FindFirst(cond interface{}) interface{}{
-    res := this.baseFindFirst(cond)
+    this.baseFindFirst(cond)
 
     var obj UserSt
     switch cond.(type) {
@@ -47,7 +47,7 @@ func (this *UserSt) FindFirst(cond interface{}) interface{}{
             return false
         }
     case string:
-        where := cond.(string)
+        // where := cond.(string)
         
     default:
         conds := cond.(Object)

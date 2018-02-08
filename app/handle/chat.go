@@ -4,7 +4,7 @@ import (
 	"sync"
 
 	"avalon/plugin"
-	"github.com/astaxie/beego/orm"
+	// "github.com/astaxie/beego/orm"
 	"avalon/app/model"
 	"net/http"
 

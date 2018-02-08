@@ -95,7 +95,7 @@ func middelware(cont handle.BaseI) gin.HandlerFunc {
 
 func WebsocketLoop(w http.ResponseWriter, r *http.Request) {
 	
- 	conn, err := Upgrader.Upgrade(w, r, nil)
+ 	_, err := Upgrader.Upgrade(w, r, nil)
     if err != nil {
         Println("Failed to set websocket upgrade: %+v", err)
         return
