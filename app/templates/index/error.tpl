@@ -1,20 +1,24 @@
 {{ define "error.tpl" }}
-<html>
+{{template "head.tpl"}}
+<h8>-- 脑补背景 --</h8>
+
+
 <h1>
-       [ERROR] {{.data.code}}
+       [ERROR-PAGE]
 </h1>
 
 
 <div>
-       INFO:
-       <div>
-               {{range $k, $v := .data.data}}
-                       -{{$v}}</br>
+        DATA:
+        <div>
+               {{range $k, $v := .data}}
+                       {{$k}}-{{$v}}</br>
                {{end}}
-       </div>
-
-       <td>{{.data.msg}}</td>
+		</div>
+		<dt> code: {{.code}} </dt>
+   		<dt> msg: {{.msg}} </dt>
 </div>
 
+<h8>-- 脑补背景 --</h8>
 
 {{ end }}

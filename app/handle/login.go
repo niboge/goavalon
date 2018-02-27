@@ -7,12 +7,12 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"fmt"
-	"log"
 	"avalon/conf"
 	"avalon/db"
 	"avalon/plugin"
 	"avalon/util"
+	"fmt"
+	"log"
 	"time"
 )
 

@@ -16,9 +16,9 @@ type Client struct {
 }
 
 type RoomUserInfo struct {
-	Name      string `json:"name"`
-	NickName  string `json:"nickName"`
-	Avatar string `json:"Avatar"`
+	Name     string `json:"name"`
+	NickName string `json:"nickName"`
+	Avatar   string `json:"Avatar"`
 }
 
 type Message struct {
@@ -30,8 +30,8 @@ type Message struct {
 		Captain string `json:"captain"`
 	} `json:"roleInfo"`
 	UserInfo struct {
-		NickName  string `json:"nickName"`
-		Avatar string `json:"Avatar"`
+		NickName string `json:"nickName"`
+		Avatar   string `json:"Avatar"`
 	} `json:"userInfo"`
 	UserList []RoomUserInfo `json:"userList"`
 	TeamSize int            `json:"teamSize"`

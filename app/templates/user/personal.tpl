@@ -1,4 +1,7 @@
-{{ define "user/personal.tpl" }}
+{{ define "personal.tpl" }}
+
+{{template "nav.tpl"}}
+
 
 <h3>用户信息</h3>
 

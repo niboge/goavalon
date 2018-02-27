@@ -15,7 +15,7 @@ import (
 var Index IndexSt
 
 func init() {
-	Index = IndexSt{"[圣杯战争] [刺客练刀房] [莫甘娜演技培训班] [神民推理爆炸] [狼美人叫嚣全场] [忠臣跳奥博伦]", BaseSt{Data:Object{}, c:nil}}
+	Index = IndexSt{"[圣杯战争] [刺客练刀房] [莫甘娜演技培训班] [神民] [狼美人叫嚣] [毒奶]", BaseSt{Data: Object{}, c: nil}}
 }
 
 /**
@@ -35,8 +35,8 @@ func (this *IndexSt) Main(context *gin.Context) {
 		}
 	}()
 
-	user := model.User.FindFirst(2)
-	if user == false{
+	suc, user := model.User.FindFirst(2)
+	if suc == false {
 		panic(" no this user")
 	}
 
@@ -45,10 +45,10 @@ func (this *IndexSt) Main(context *gin.Context) {
 		"game_slogn": Str.Split(this.Info, " "),
 		"players":    "玩家",
 		"game":       "game",
-		"info": user,
+		"info":       user,
 	}
 
-	this.succ(data,"index.tpl")
+	this.succ(data, "index.tpl")
 }
 
 func (this *IndexSt) Self() string {

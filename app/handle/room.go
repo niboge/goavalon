@@ -5,10 +5,9 @@ import (
 	"math/rand"
 	"sync"
 
-	"github.com/gin-gonic/gin"
 	"avalon/app/model"
 	. "avalon/plugin/selftype"
-
+	"github.com/gin-gonic/gin"
 	// "log"
 	// . "fmt"
 )
@@ -16,7 +15,7 @@ import (
 var Room RoomSt
 
 func init() {
-	Room = RoomSt{BaseSt:BaseSt{Data:Object{}, c:nil}, Mutex:sync.Mutex{}}
+	Room = RoomSt{BaseSt: BaseSt{Data: Object{}, c: nil}, Mutex: sync.Mutex{}}
 }
 
 type RoomSt struct {
@@ -44,12 +43,11 @@ func (this *RoomSt) Main(context *gin.Context) {
 	// }()
 
 	rooms := model.Room.Find(true)
-	if rooms == nil{
+	if rooms == nil {
 		panic("no  room")
 	}
 
-
-	this.succ(rooms,"room.tpl")
+	this.succ(rooms, "room.tpl")
 }
 
 func CreteRoom(roomName string, roomSize int) *RoomSt {

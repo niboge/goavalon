@@ -36,7 +36,7 @@ func (this *UserSt) TableName() string {
     return "user"
 }
 
-func (this *UserSt) FindFirst(cond interface{}) interface{}{
+func (this *UserSt) FindFirst(cond interface{}) (bool,UserSt){
     this.baseFindFirst(cond)
 
     var obj UserSt
@@ -44,7 +44,7 @@ func (this *UserSt) FindFirst(cond interface{}) interface{}{
     case int:
         obj = UserSt{Id:cond.(int)}
         if err := orm.Read(&obj, "Id"); err != nil {
-            return false
+            return false, obj
         }
     case string:
         // where := cond.(string)
@@ -56,8 +56,7 @@ func (this *UserSt) FindFirst(cond interface{}) interface{}{
         Printf("%V %V \n",where,limit)
     }
     
-    return obj
-
+    return true, obj
 }
 
 func (this *UserSt) Save(cond interface{}) (int , error) {

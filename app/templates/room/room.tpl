@@ -5,7 +5,7 @@
     <div class="jumbotron">
         <h2>阿瓦隆    狼人杀</h2>
         <p>This is a good game  It includes  ...</p>
-        <a class="btn btn-primary btn-large" href="/doc/gamerule">Learn more</a>
+        <a class="btn btn-primary btn-large" href="/doc/rule">Learn more</a>
     </div>
     <div class="row">
         {{range $k, $room := .data}}
