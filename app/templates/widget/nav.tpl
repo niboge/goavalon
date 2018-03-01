@@ -8,7 +8,7 @@
         </a>
         <ul class="dropdown-menu">
             <li><a href="/user">个人中心</a></li>
-            <li><a href="/user/login">登录</a></li>
+            <li><a href="/index/login">登录</a></li>
             <li><a href="/user/logout">登出</a></li>
             <li class="divider"></li>
             <li><a href="/user/addbug">提交Bug</a></li>

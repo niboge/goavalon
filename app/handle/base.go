@@ -31,27 +31,30 @@ type BaseI interface {
 
 func (this *BaseSt) BeforeHandle(c *gin.Context, sessionM *session.Manager) {
 
-	// context
+	// context、sessionM
 	this.c = c
+	this.sessionManager = sessionM
+
+	// response
+	this.Data["msg"] = ""
+	this.Data["code"] = 0
 
 	// auth
 	if this.auth != false {
-		user, _ := this.c.GetQuery(gin.AuthUserKey)
-		if secret, ok := secrets[user]; ok {
-			if secret.(Object)["pwd"] != this.c.Query("pwd") {
-				this.failPage("valid auth pwd")
-			}
-		} else {
-			this.failPage("valid auth")
+		user := this.GetSession("UserAuth")
+		if user==nil {
+			this.setRetCode(-401).failPage("auth valid!")
 		}
 	}
-
-	// session
-	this.sessionManager = sessionM
 }
 
 func (this *BaseSt) setRetCode(code int) *BaseSt {
 	this.Data["code"] = code
+	return this
+}
+
+func (this *BaseSt) setRetMsg(msg string) *BaseSt {
+	this.Data["msg"] = msg
 	return this
 }
 
@@ -60,9 +63,13 @@ func (this *BaseSt) fail(msg interface{}) {
 
 	this.Data["data"] = Object{}
 	this.Data["msg"] = msg.(string)
-	this.Data["code"] = -1
+
+	if this.Data["code"] == 0 {
+		this.Data["code"] = -1
+	}
 	
 	this.c.JSON(http.StatusBadRequest, this.Data)
+	this.c.Abort()
 }
 
 func (this *BaseSt) failPage(msg interface{}) {
@@ -70,7 +77,9 @@ func (this *BaseSt) failPage(msg interface{}) {
 
 	this.Data["data"] = Object{}
 	this.Data["msg"] = msg.(string)
-	this.Data["code"] = -1
+	if this.Data["code"] == 0 {
+		this.Data["code"] = -1
+	}
 
 	this.c.HTML(http.StatusInternalServerError, "error.tpl", this.Data)
 	this.c.Abort()
@@ -80,18 +89,20 @@ func (this *BaseSt) succ(data interface{}, tpl_name string) {
 	defer this.sessionRelease()
 
 	this.Data["data"] = data
-	this.Data["msg"] = ""
-
-	fmt.Printf("\n INFO: %V %v \n", data)
-
-	this.Data["code"] = 0
-
-	this.c.HTML(http.StatusOK, tpl_name, this.Data)
+	
+	fmt.Printf("\n respons INFO: %V %v \n", data)
+	
+	if tpl_name == "" {
+		this.c.JSON(http.StatusOK, this.Data)
+		this.c.Abort()
+	}else{
+		this.c.HTML(http.StatusOK, tpl_name, this.Data)
+		this.c.Abort()
+	}
 }
 
 func (this *BaseSt) isAjax() bool {
-	// return input.Header("X-Requested-With") == "XMLHttpRequest"
-	return true
+	return this.c.GetHeader("X-Requested-With") == "XMLHttpRequest"
 }
 
 

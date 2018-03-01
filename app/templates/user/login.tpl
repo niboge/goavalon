@@ -3,6 +3,7 @@
 
 <div class="panel-heading">
     <form class="form-horizontal" role="form" method="post">
+        <h4> {{.msg}}</h4>
         <div class="form-group">
             <label for="firstname" class="col-sm-2 control-label">用户名</label>
             <div class="col-sm-10">

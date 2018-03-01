@@ -1,4 +1,12 @@
 {{ define "error.tpl" }}
+
+{{if eq .code -401}}
+<script>
+	window.location.href='/index/login';
+</script>
+{{end}}
+
+
 {{template "head.tpl"}}
 <h8>-- 脑补背景 --</h8>
 

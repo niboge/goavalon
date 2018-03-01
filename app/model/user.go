@@ -8,7 +8,6 @@ import (
 
     . "fmt"
 
-    . "avalon/plugin/selftype"
 )
 
 var User *UserSt
@@ -16,6 +15,7 @@ var User *UserSt
 func init() {
     User = new(UserSt)
     Orm.RegisterModel(User)
+    User.tableName = "user"
 }
 
 type UserSt struct {
@@ -29,6 +29,7 @@ type UserSt struct {
     Score int
     Win int
     Lose int
+    WinRate string
     // Profile *Profile `orm:"rel(one)"` // OneToOne relation
 }
 
@@ -37,26 +38,11 @@ func (this *UserSt) TableName() string {
 }
 
 func (this *UserSt) FindFirst(cond interface{}) (bool,UserSt){
-    this.baseFindFirst(cond)
-
-    var obj UserSt
-    switch cond.(type) {
-    case int:
-        obj = UserSt{Id:cond.(int)}
-        if err := orm.Read(&obj, "Id"); err != nil {
-            return false, obj
-        }
-    case string:
-        // where := cond.(string)
-        
-    default:
-        conds := cond.(Object)
-        where := conds["where"]
-        limit := conds["limit"]
-        Printf("%V %V \n",where,limit)
-    }
+    var res UserSt
     
-    return true, obj
+    err := this.Base.FindFirst(cond).QueryRow(&res)
+
+    return err == nil, res
 }
 
 func (this *UserSt) Save(cond interface{}) (int , error) {

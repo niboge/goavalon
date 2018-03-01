@@ -34,31 +34,17 @@ func (this *UserSt) Info(context *gin.Context) {
 		}
 	}()
 
-  this.SetSession("name","value")
-  
-  var data = Object{
-    "account": "阿瓦隆Demo",
-    "nick":    "玩家Demo",
-    "score":   "100",
-    "win":     10.0,
-    "lose":    3.0,
-    "winrate": 56.0,
-  }
+  var user model.UserSt
 
-	succ, user := model.User.FindFirst(2)
-	if succ {
-    data["account"] = user.Account
-    data["nick"] = user.NickName
-    data["avatar"] = this.c
-    data["score"] = user.Score
-    data["win"] = user.Win
-    data["lose"] = user.Lose
+	auth := this.GetSession("UserAuth")
+	if auth != nil {
+    user = auth.(model.UserSt)
     if user.Lose + user.Win != 0 {
-      data["winrate"] = Sprintf("%.2f", float32(user.Win)/float32(user.Win+user.Lose)*100)
-    }else {
-      data["winrate"] = '-'
+      user.WinRate = Sprintf("%.2f", float32(user.Win)/float32(user.Win+user.Lose)*100)
     }
   }
 
-	this.succ(data, "personal.tpl")
+	this.succ(user, "personal.tpl")
 }
+
+

@@ -4,7 +4,8 @@ import (
     "github.com/astaxie/beego"
     Orm "github.com/astaxie/beego/orm"
     _ "github.com/go-sql-driver/mysql"
-
+    
+    . "avalon/plugin/selftype"
     . "fmt"
 )
 
@@ -28,25 +29,56 @@ func Register() {
     // this.TableName()
 // }
 
-func (this *Base)baseFindFirst(cond interface{}) interface{} {
-    // return this.FindFirst()
-    return cond
-}
+func (this *Base)FindFirst(cond interface{}) Orm.RawSeter{
+    db, _ = Orm.NewQueryBuilder("mysql")
 
-func (this *Base)Find(cond interface{}) string{
-    db,_ = Orm.NewQueryBuilder("mysql")
-
-    var res string
+    var res Orm.RawSeter
+    var sql string
     
     switch cond.(type) {
     case bool:
-        res = db.Select("*").From("room").String()
+        // res = db.Select("*").From("room").String()
     case int:
-        res = db.Select("*").
-        From(this.tableName).
-        Where("id=" + "1").String()
+        sql = db.Select("*").From(this.tableName).Where(Sprintf("id=%d", cond)).String()
+
+        res = orm.Raw(sql)
+    case string:
+        sql = db.Select("*").From(this.tableName).Where(cond.(string)).String()
+        res = orm.Raw(sql)
+    
+    case ModelCond:
+        conds := cond.(ModelCond)
+        if conds.Column == "" {
+            conds.Column = "*"
+        }
+        if conds.Where == "" {
+            conds.Where = "TURE"
+        }
+
+        sql = db.Select(conds.Column).From(this.tableName).Where(conds.Where).String()
+        res = orm.Raw(sql,conds.Bind)
+    }
+
+    Printf("[DB-FindFirst]: %v \n",sql)
+    
+    return res
+}
+
+func (this *Base)Find(cond interface{}) Orm.RawSeter{
+    db,_ = Orm.NewQueryBuilder("mysql")
+
+    var res Orm.RawSeter
+    
+    switch cond.(type) {
+    case bool:
+        res = orm.Raw( db.Select("*").From("room").String())
+    case int:
+        res = orm.Raw( db.Select("*").From(this.tableName).Where(Sprintf("id=%d", cond)).String())
     case string:
         db.Select("*").From(this.tableName).Where(cond.(string))
+    case ModelCond:
+        conds := cond.(ModelCond)
+        db.Select("*").From(this.tableName).Where(conds.Where)
     default:
         conds := Orm.Params{}
         where := conds["where"]
@@ -55,7 +87,7 @@ func (this *Base)Find(cond interface{}) string{
         // res = db.Select("name").From("_room").Where("sdf").String()
     }
 
-    Printf("[DB-INFO]: %v \n",res)
+    Printf("[DB-Find]: %v \n",res)
     
     return res
 }

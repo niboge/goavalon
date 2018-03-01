@@ -43,7 +43,7 @@ func (this *RoomSt) TableName() string {
 }
 
 func (this *RoomSt) FindFirst(cond interface{}) interface{}{
-    this.baseFindFirst(cond)
+    this.Base.FindFirst(cond)
 
     var obj RoomSt
     switch cond.(type) {
@@ -66,8 +66,8 @@ func (this *RoomSt) FindFirst(cond interface{}) interface{}{
 }
 
 func (this *RoomSt) Find(cond interface{}) interface{}{
-    sql := this.Base.Find(cond)
-    orm.Raw(sql).QueryRows(&RoomArr)
+    raw := this.Base.Find(cond)
+    raw.QueryRows(&RoomArr)
     return RoomArr
 }
 

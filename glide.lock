@@ -1,5 +1,5 @@
-hash: 067d8f149a621af9b2c707ebf1cc28dedfd3c74e09f864564715ceaf148b0651
-updated: 2018-02-01T13:44:12.139796591+08:00
+hash: 6253f1aa6fe8d14676a4d3b8050cb86dff52f4c248344a2e9d7e585821698fbc
+updated: 2018-02-27T19:36:34.389082169+08:00
 imports:
 - name: github.com/astaxie/beego
   version: bf5c5626ab429e66d88602e1ab1ab5fbf4629a01
@@ -11,12 +11,18 @@ imports:
   - logs
   - orm
   - session
+  - session/redis
   - toolbox
   - utils
 - name: github.com/beatrichartz/martini-sockets
   version: 3eafc7b6445cc1405ff4911e1c5bca4878540eba
 - name: github.com/codegangsta/inject
   version: 33e0aa1cb7c019ccc3fbe049a8262a6403d30504
+- name: github.com/garyburd/redigo
+  version: d1ed5c67e5794de818ea85e6b522fda02623a484
+  subpackages:
+  - internal
+  - redis
 - name: github.com/gin-contrib/sse
   version: 22d885f9ecc78bf4ee5d72b937e4bbcdc58e8cae
 - name: github.com/gin-gonic/gin

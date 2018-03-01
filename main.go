@@ -7,6 +7,7 @@ import (
 
 	"avalon/app/model"
 	"github.com/astaxie/beego/session"
+	// _ "github.com/astaxie/beego/session/redis"
 	"github.com/astaxie/beego"
 	"github.com/gorilla/websocket"
 
@@ -75,6 +76,8 @@ func Route(router *gin.Engine) {
 	group := router.Group("/index", middelware(&handle.Index))
 	{
 		group.GET("/main", handle.Index.Main)
+		group.GET("/login", handle.Index.Login)
+		group.POST("/login", handle.Index.Login)
 	}
 
 	// user
