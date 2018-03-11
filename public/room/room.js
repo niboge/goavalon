@@ -6,7 +6,7 @@ var face_count = 19;
 
 
 $(document).ready(function () {
-	var wsServer = 'ws://'+_HOST;
+	var wsServer = 'ws://'+_HOST+'/websocket'+'?roomName=' + roomName;
 
     //使用原生WebSocket
     if (window.WebSocket || window.MozWebSocket)
@@ -38,7 +38,7 @@ function listenEvent()
     };
 
     ws.onmessage = function (e) {
-    	console.log(e)
+        console.log(e);
         var message = JSON.parse(e.data);
         var cmd = message.cmd;
         if (cmd == 'login')
@@ -75,11 +75,12 @@ function listenEvent()
     };
 
     ws.onclose = function (e) {
+        console.log(e)
         $(document.body).html("<h1 style='text-align: center'>连接已断开，请刷新页面重新登录。</h1>");
     };
 
     ws.onerror = function (e) {
-        $(document.body).html("<h1 style='text-align: center'>服务器[" + webim.server +
+        $(document.body).html("<h1 style='text-align: center'>服务器[" + _HOST +
             "]: 拒绝了连接. 请检查服务器是否启动. </h1>");
         console.log("onerror: " + e.data);
     };

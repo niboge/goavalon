@@ -3,8 +3,6 @@ package handle
 import (
 
 	"github.com/gin-gonic/gin"
-
-	. "avalon/plugin/selftype"
 )
 
 // main page

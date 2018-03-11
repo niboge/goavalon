@@ -5,7 +5,7 @@ import (
     Orm "github.com/astaxie/beego/orm"
     _ "github.com/go-sql-driver/mysql"
     
-    . "avalon/plugin/selftype"
+    // . "avalon/plugin/selftype"
     . "fmt"
 )
 
@@ -14,6 +14,15 @@ var db Orm.QueryBuilder
 
 type Base struct{
     tableName string
+}
+
+// 构建model查询
+type ModelCond struct{
+    Where string
+    Bind interface{}
+    Column string
+    Order string
+    Group string
 }
 
 func Register() {
@@ -56,10 +65,10 @@ func (this *Base)FindFirst(cond interface{}) Orm.RawSeter{
         }
 
         sql = db.Select(conds.Column).From(this.tableName).Where(conds.Where).String()
-        res = orm.Raw(sql,conds.Bind)
+        res = orm.Raw(sql, conds.Bind)
     }
 
-    Printf("[DB-FindFirst]: %v \n",sql)
+    // Printf("[DB-FindFirst]: %v \n",sql)
     
     return res
 }

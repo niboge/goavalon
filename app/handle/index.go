@@ -9,7 +9,6 @@ import (
 
 	"avalon/app/model"
 
-	. "avalon/plugin/selftype"
 )
 
 var Index IndexSt
@@ -64,7 +63,7 @@ func (this *IndexSt) Login(context *gin.Context) {
 		uname := this.c.PostForm("username")
 		pwd := this.c.PostForm("password")
 
-		ok, user := model.User.FindFirst( ModelCond{Where:"account=?", Bind:uname} )
+		ok, user := model.User.FindFirst( model.ModelCond{Where:"account=?", Bind:uname} )
 		if ok && user.Pwd == pwd {
 			this.SetSession("UserAuth", user)
 			this.c.Redirect(302, "/user")

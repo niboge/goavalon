@@ -9,7 +9,6 @@ import (
 
 	"avalon/app/model"
 
-	. "avalon/plugin/selftype"
 )
 
 var User UserSt

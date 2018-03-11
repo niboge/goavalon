@@ -1,7 +1,6 @@
 package handle
 
 import (
-	. "avalon/plugin/selftype"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/astaxie/beego/session"
@@ -25,6 +24,8 @@ type BaseSt struct {
 	session session.Store
 }
 
+type Object map[string]interface{}
+
 type BaseI interface {
 	BeforeHandle(*gin.Context, *session.Manager)
 }
@@ -33,7 +34,8 @@ func (this *BaseSt) BeforeHandle(c *gin.Context, sessionM *session.Manager) {
 
 	// context、sessionM
 	this.c = c
-	this.sessionManager = sessionM
+	// this.sessionManager = sessionM
+	this.SessionStart(sessionM)
 
 	// response
 	this.Data["msg"] = ""
@@ -106,8 +108,9 @@ func (this *BaseSt) isAjax() bool {
 }
 
 
-func (this *BaseSt) SessionStart() session.Store {
-	if this.session == nil {
+func (this *BaseSt) SessionStart(sessionM *session.Manager) session.Store {
+	if sessionM != nil {
+		this.sessionManager = sessionM
 		obj, err := this.sessionManager.SessionStart(this.c.Writer, this.c.Request)
 		if err != nil {
 			// logs.Error(err)
@@ -115,28 +118,39 @@ func (this *BaseSt) SessionStart() session.Store {
 		}
 
 		this.session = obj
+	}else {
+		if this.session == nil {
+			obj, err := this.sessionManager.SessionStart(this.c.Writer, this.c.Request)
+			if err != nil {
+				// logs.Error(err)
+				panic("503 session fail!")
+			}
+
+			this.session = obj
+		}
 	}
+	
 
 	return this.session
 }
 
 func (this *BaseSt) SetSession(name interface{}, value interface{}) {
 	if this.session == nil {
-		this.SessionStart()
+		this.SessionStart(nil)
 	}
 	this.session.Set(name, value)
 }
 
 func (this *BaseSt) GetSession(name interface{}) interface{} {
 	if this.session == nil {
-		this.SessionStart()
+		this.SessionStart(nil)
 	}
 	return this.session.Get(name)
 }
 
 func (this *BaseSt) DelSession(name interface{}) {
 	if this.session == nil {
-		this.SessionStart()
+		this.SessionStart(nil)
 	}
 	this.session.Delete(name)
 }

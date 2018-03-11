@@ -5,8 +5,9 @@ import (
 	"math/rand"
 	"sync"
 
+	"log"
+	"fmt"
 	"avalon/app/model"
-	. "avalon/plugin/selftype"
 	"github.com/gin-gonic/gin"
 	// "log"
 	// . "fmt"
@@ -34,14 +35,7 @@ type RoomSt struct {
 	BaseSt
 }
 
-func (this *RoomSt) Main(context *gin.Context) {
-	// defer func() {
-	// 	if err := recover(); err != nil {
-	// 		log.Print("[Error] ", err)
-	// 		this.fail(Sprintf("%s", err))
-	// 	}
-	// }()
-
+func (this *RoomSt) List(context *gin.Context) {
 	rooms := model.Room.Find(true)
 	if rooms == nil {
 		panic("no  room")
@@ -50,7 +44,35 @@ func (this *RoomSt) Main(context *gin.Context) {
 	this.succ(rooms, "room.tpl")
 }
 
+func (this *RoomSt) Game(context *gin.Context) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Print("[Error] ", err)
+			this.fail(fmt.Sprintf("%s", err))
+		}
+	}()
+
+	name := this.c.Param("roomName")
+	room := model.Room.FindFirst( model.ModelCond{Where:"name=?", Bind:name})
+
+	if room.Id == 0 {
+		panic("no this room")
+	}
+
+	this.succ(room, "room/main.tpl")
+}
+
 func CreteRoom(roomName string, roomSize int) *RoomSt {
+	rooms := model.Room.Find(true)
+	if rooms == nil {
+		panic("no  room")
+	}
+
+	_, room = range rooms {
+		
+	}
+
+
 	dismissVote := NewVote()   // 反对票仓
 	agreeVote := NewVote()     // 同意票仓
 	turnTalkList := list.New() // 轮流发言链表

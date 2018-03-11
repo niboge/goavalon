@@ -7,8 +7,6 @@ import (
     _ "github.com/go-sql-driver/mysql"
 
     . "fmt"
-
-    . "avalon/plugin/selftype"
 )
 
 var Room *RoomSt
@@ -18,7 +16,6 @@ func init() {
     Room = new(RoomSt)
     Orm.RegisterModel(Room)
     Room.tableName = "room"
-    // Room.before()
 }
 
 type RoomSt struct {
@@ -42,27 +39,12 @@ func (this *RoomSt) TableName() string {
     return "room"
 }
 
-func (this *RoomSt) FindFirst(cond interface{}) interface{}{
-    this.Base.FindFirst(cond)
-
-    var obj RoomSt
-    switch cond.(type) {
-    case int:
-        obj = RoomSt{Id:cond.(int)}
-        if err := orm.Read(&obj, "Id"); err != nil {
-            return false
-        }
-    case string:
-        // where := cond.(string)
-        
-    default:
-        conds := cond.(Object)
-        where := conds["where"]
-        limit := conds["limit"]
-        Printf("%V %V \n",where,limit)
-    }
+func (this *RoomSt) FindFirst(cond interface{}) RoomSt{
+    var res RoomSt
     
-    return obj
+    this.Base.FindFirst(cond).QueryRow(&res)
+
+    return res
 }
 
 func (this *RoomSt) Find(cond interface{}) interface{}{

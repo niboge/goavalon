@@ -18,6 +18,7 @@
                     <h6>创建人: {{$room.Owner}}</h6>
                     <h6>公告: {{$room.Notice}}</h6>
                     <h6>游戏类型: {{$room.Type}}</h6>
+                    <li><a class="btn btn-primary btn-large" href=/room/in{{$room.Name}} >Learn more</a></li>
                 </div>
             </div>
         {{end}}
