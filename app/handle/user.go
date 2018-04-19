@@ -45,5 +45,3 @@ func (this *UserSt) Info(context *gin.Context) {
 
 	this.succ(user, "personal.tpl")
 }
-
-

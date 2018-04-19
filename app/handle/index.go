@@ -8,7 +8,6 @@ import (
 	Str "strings"
 
 	"avalon/app/model"
-
 )
 
 var Index IndexSt
@@ -38,7 +37,7 @@ func (this *IndexSt) Main(context *gin.Context) {
 	// if suc == false {
 	// 	panic(" no this user")
 	// }
-	
+
 	var data = Object{
 		"game_name":  "阿瓦隆",
 		"game_slogn": Str.Split(this.Info, " "),
@@ -63,12 +62,13 @@ func (this *IndexSt) Login(context *gin.Context) {
 		uname := this.c.PostForm("username")
 		pwd := this.c.PostForm("password")
 
-		ok, user := model.User.FindFirst( model.ModelCond{Where:"account=?", Bind:uname} )
+		ok, user := model.User.FindFirst(model.ModelCond{Where: "account=?", Bind: uname})
+
 		if ok && user.Pwd == pwd {
 			this.SetSession("UserAuth", user)
 			this.c.Redirect(302, "/user")
-		}else {
-			this.setRetMsg("error pwd or account").succ(nil, "login.tpl")			
+		} else {
+			this.setRetMsg("error pwd or account").succ(nil, "login.tpl")
 		}
 
 		return
@@ -77,12 +77,12 @@ func (this *IndexSt) Login(context *gin.Context) {
 	// -登录页
 	auth := this.GetSession("UserAuth")
 	if auth == nil {
-		this.succ(Object{}, "login.tpl")			
-	}else {
+		this.succ(Object{}, "login.tpl")
+	} else {
 		user := auth.(model.UserSt)
-		if user.Lose + user.Win != 0 {
+		if user.Lose+user.Win != 0 {
 			user.WinRate = Sprintf("%.2f", float32(user.Win)/float32(user.Win+user.Lose)*100)
-    	}
+		}
 		this.succ(user, "personal.tpl")
 	}
 

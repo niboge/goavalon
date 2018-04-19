@@ -21,14 +21,14 @@ func init() {
 }
 
 func main() {
-	// gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.DebugMode)
 	r := gin.Default()
 
 	Session()
 
 	Route(r)
 
-	r.Run("xdd.cn:80") // listen and serve on 0.0.0.0:8080
+	r.Run("haibo.com:8080") // listen and serve on 0.0.0.0:8080
 }
 
 var globalSession *session.Manager
@@ -92,4 +92,3 @@ func middelware(cont handle.BaseI) gin.HandlerFunc {
 		cont.BeforeHandle(c, globalSession)
 	}
 }
-

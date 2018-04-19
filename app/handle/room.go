@@ -8,6 +8,7 @@ import (
 	"log"
 	"fmt"
 	"avalon/app/model"
+	"avalon/util"
 	"github.com/gin-gonic/gin"
 	// "log"
 	// . "fmt"
@@ -27,9 +28,9 @@ type RoomSt struct {
 	GameNum       int                // 房间当前局数
 	GoodManWins   int                // 抵抗组织成员获胜局数
 	BadGuysWins   int                // 间谍成员获胜局数
-	TurnsTalkList *list.List         // 轮流发言链表
-	DisVote       *VoteSet           // 反对票仓
-	AgrVote       *VoteSet           // 赞成票仓
+	TurnsTalkList *list.List 		 // 轮流发言链表
+	DisVote       *util.VoteSet           // 反对票仓
+	AgrVote       *util.VoteSet           // 赞成票仓
 	Captains      []string           // 队长链表
 	Clients       map[string]*Client // 客户端管理池
 	BaseSt
@@ -62,31 +63,31 @@ func (this *RoomSt) Game(context *gin.Context) {
 	this.succ(room, "room/main.tpl")
 }
 
-func CreteRoom(roomName string, roomSize int) *RoomSt {
-	rooms := model.Room.Find(true)
-	if rooms == nil {
-		panic("no  room")
-	}
+// func CreteRoom(roomName string, roomSize int) *RoomSt {
+// 	rooms := model.Room.Find(true)
+// 	if rooms == nil {
+// 		panic("no  room")
+// 	}
 
-	_, room = range rooms {
+// 	// for _, room := range rooms {
 		
-	}
+// 	// }
 
 
-	dismissVote := NewVote()   // 反对票仓
-	agreeVote := NewVote()     // 同意票仓
-	turnTalkList := list.New() // 轮流发言链表
-	room := RoomSt{
-		Mutex:         sync.Mutex{},
-		Name:          roomName,
-		DisVote:       dismissVote,
-		AgrVote:       agreeVote,
-		Clients:       map[string]*Client{},
-		RoomSize:      roomSize,
-		TurnsTalkList: turnTalkList,
-		Captains:      []string{}}
-	return &room
-}
+// 	dismissVote := NewVote()   // 反对票仓
+// 	agreeVote := NewVote()     // 同意票仓
+// 	turnTalkList := list.New() // 轮流发言链表
+// 	room := RoomSt{
+// 		Mutex:         sync.Mutex{},
+// 		Name:          roomName,
+// 		DisVote:       dismissVote,
+// 		AgrVote:       agreeVote,
+// 		Clients:       map[string]*Client{},
+// 		RoomSize:      roomSize,
+// 		TurnsTalkList: turnTalkList,
+// 		Captains:      []string{}}
+// 	return &room
+// }
 
 // 初始化游戏信息
 func (room *RoomSt) InitRoomGame() {

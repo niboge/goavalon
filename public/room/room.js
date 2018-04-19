@@ -29,12 +29,6 @@ function listenEvent()
     ws.onopen = function (e) {
         //连接成功
         console.log("connect server success.");
-        //发送登录信息
-        // msg = new Object();
-        // msg.cmd = 'login';
-        // msg.name = user.nickname;
-        // msg.avatar = user.avatar;
-        // ws.send($.toJSON(msg));
     };
 
     ws.onmessage = function (e) {
@@ -82,7 +76,8 @@ function listenEvent()
     ws.onerror = function (e) {
         $(document.body).html("<h1 style='text-align: center'>服务器[" + _HOST +
             "]: 拒绝了连接. 请检查服务器是否启动. </h1>");
-        console.log("onerror: " + e.data);
+        console.log("onerror: ");
+        console.log(e);
     };
 }
 

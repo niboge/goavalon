@@ -13,9 +13,9 @@
 <script type="text/javascript">
     var _HOST = 'shikii.cc';
     var _WEB_HOST = 'www.shikii.cc';
-    if( window.location.host.indexOf('shikii') == -1) {
-        _HOST = 'xdd.cn';
-        _WEB_HOST = 'www.xdd.cn';
+    if( window.location.host.indexOf(':') > 0) {
+        _HOST = 'haibo.com:8080';
+        _WEB_HOST = 'haibo.com';
     }
 
 
