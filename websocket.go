@@ -22,7 +22,7 @@ import (
 
 func init() {
 	CreteRoom("tes", 12)
-	go manager.start()
+	go manager.roomMaster()
 }
 
 var Upgrader = websocket.Upgrader{
@@ -105,7 +105,7 @@ func WebsocketLoop(w http.ResponseWriter, r *http.Request) {
 	go client.write()
 }
 
-func (manager *ClientManager) start() {
+func (manager *ClientManager) roomMaster() {
 	for {
 		select {
 		case conn := <-manager.register:
@@ -114,30 +114,32 @@ func (manager *ClientManager) start() {
 			manager.sendRoom(jsonMessage, conn.roomName)
 		case conn := <-manager.unregister:
 			if a, ok := manager.clients[conn.roomName]; ok {
-				close(conn.send)
-				// delete(manager.clients[conn.roomName], conn.roomName)
+				delete(manager.clients[conn.roomName], conn.id)
 				jsonMessage, _ := json.Marshal(&Message{Content: "[" + conn.user.NickName + "]离开了房间!"})
-				manager.send(jsonMessage, conn)
+				manager.sendRoom(jsonMessage, conn.roomName)
 			}
 		case message := <-manager.broadcast:
-			for _, conn := range manager.clients["圣杯战争"] {
-				Printf("[!TEST!] %V \n", conn)
-				select {
-				case conn.send <- message:
-				default:
-					close(conn.send)
-					delete(manager.clients[conn.roomName], conn.id)
+			for _, room := range manager.clients {
+				for _, conn := range room {
+					select {
+					case conn.send <- message:
+					default:
+						close(conn.send)
+						delete(manager.clients[conn.roomName], conn.id)
+					}
 				}
 			}
 		}
 	}
 }
 
-func (manager *ClientManager) send(message []byte, ignore *Client) {
-	for _, conn := range manager.clients["圣杯战争"] {
-		// if conn != ignore {
-		conn.send <- message
-		// }
+func (manager *ClientManager) board(message []byte, ignore *Client) {
+	for _, room := range manager.clients {
+		for _, conn := range room {
+			// if conn != ignore {
+			conn.send <- message
+			// }
+		}
 	}
 }
 
@@ -156,8 +158,8 @@ func (c *Client) read() {
 	for {
 		_, message, err := c.socket.ReadMessage()
 		if err != nil {
-			manager.unregister <- c
 			c.socket.Close()
+			manager.unregister <- c
 			break
 		}
 		jsonMessage, _ := json.Marshal(&Message{Sender: c.id, Content: string(message)})
