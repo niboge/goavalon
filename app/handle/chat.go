@@ -52,13 +52,15 @@ func (chat *Chat) RemoveChat(roomName string) {
 }
 
 // HandleGameSocket ...
-func ResistSocket(req *http.Request, params martini.Params, recevier <-chan *Message, sender chan<- *Message, done <-chan bool, disconnect chan<- int, err <-chan error, session *plugin.SessionManager) (int, string) {
+func ResistSocket(req *http.Request, params martini.Params, recevier <-chan *Message, sender chan<- *Message, done <-chan bool, disconnect chan<- int, err <-chan error) (int, string) {
 	sessionKey := req.Header.Get("authSessionKey")
 	roomName := params["name"]
-	info, ok := session.Get("userInfo")
-	if ok == true {
+
+	session, _ := plugin.NewRedis("")
+	info, _ := session.Get("userInfo")
+	if info == nil {
 		userInfo := info.(model.UserSt)
-		cli := Client{Name: sessionKey, UserInfo: userInfo, in: recevier, out: sender, done: done, err: err, diconnect: disconnect}
+		cli := Client{Name: sessionKey, UserInfo: userInfo, in: recevier, out: sender, done: done, diconnect: disconnect /*, err: <-err*/}
 		room := chat.GetRoomByName(roomName)
 		if room == nil {
 			return 404, "{errorInfo:'can't find room'}"

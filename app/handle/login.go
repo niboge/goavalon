@@ -71,18 +71,20 @@ func LoginWechatUser(req *http.Request, config *conf.Config, uid int, pwd string
 	}
 }
 
-func RegisterWechatUser(req *http.Request, config *conf.Config, session *plugin.SessionManager) (int, string) {
+func RegisterWechatUser(req *http.Request, config *conf.Config) (int, string) {
 	decoder := json.NewDecoder(req.Body)
 	var wechatUserData WechatUserData
 	err := decoder.Decode(&wechatUserData)
 	if err != nil {
 		log.Fatal(err)
 	}
-	wxsession, has := session.Get("wxsessionKey")
+
+	session, _ := plugin.NewRedis("")
+	wxsession, err := session.Get("wxsessionKey")
 	// 转换为wxsession
 	var twxsession = wxsession.(*WxSessionKey)
 	fmt.Println(twxsession)
-	if has == true {
+	if err != nil {
 		// 解密加密信息
 		wxbiz := util.WxBizDataCrypt{AppID: config.Wechat.APPID, SessionKey: twxsession.SessionKey}
 		jsonUserInfo, err := wxbiz.Decrypt(wechatUserData.EncryptedData, wechatUserData.Iv, true)
@@ -150,7 +152,8 @@ func getWxSessionCode(wxcode *WxCode, config *conf.Config) *WxSessionKey {
 	return &wxKey
 }
 
-func createThirdPatyKey(wxsessionKey *WxSessionKey, u *db.User, session *plugin.SessionManager) string {
+func createThirdPatyKey(wxsessionKey *WxSessionKey, u *db.User) string {
+	session, _ := plugin.NewRedis("")
 	// 创建第三方key
 	b := make([]byte, 16)
 	if _, err := io.ReadFull(rand.Reader, b); err != nil {

@@ -8,12 +8,15 @@ import (
 	Str "strings"
 
 	"avalon/app/model"
+	"avalon/plugin"
+	"encoding/json"
+	"time"
 )
 
-var Index IndexSt
+var Index *IndexSt
 
 func init() {
-	Index = IndexSt{"[圣杯战争] [刺客练刀房] [莫甘娜演技培训班] [神民] [狼美人叫嚣] [毒奶]", BaseSt{Data: Object{}, c: nil}}
+	Index = &IndexSt{"[圣杯战争] [刺客练刀房] [莫甘娜演技培训班] [神民] [狼美人叫嚣] [毒奶]", BaseSt{Data: Object{}, c: nil}}
 }
 
 /**
@@ -63,9 +66,8 @@ func (this *IndexSt) Login(context *gin.Context) {
 		pwd := this.c.PostForm("password")
 
 		ok, user := model.User.FindFirst(model.ModelCond{Where: "account=?", Bind: uname})
-
 		if ok && user.Pwd == pwd {
-			this.SetSession("UserAuth", user)
+			this.sendTicket(&user)
 			this.c.Redirect(302, "/user")
 		} else {
 			this.setRetMsg("error pwd or account").succ(nil, "login.tpl")
@@ -75,17 +77,24 @@ func (this *IndexSt) Login(context *gin.Context) {
 	}
 
 	// -登录页
-	auth := this.GetSession("UserAuth")
-	if auth == nil {
+	if this.user == nil {
 		this.succ(Object{}, "login.tpl")
 	} else {
-		user := auth.(model.UserSt)
-		if user.Lose+user.Win != 0 {
-			user.WinRate = Sprintf("%.2f", float32(user.Win)/float32(user.Win+user.Lose)*100)
+		if this.user.Lose+this.user.Win != 0 {
+			this.user.WinRate = Sprintf("%.2f", float32(this.user.Win)/float32(this.user.Win+this.user.Lose)*100)
 		}
-		this.succ(user, "personal.tpl")
+		this.succ(this.user, "personal.tpl")
 	}
 
+}
+
+func (this *IndexSt) sendTicket(user *model.UserSt) {
+	user.LoginTime = int(time.Now().Unix())
+	userencode, _ := json.Marshal(user)
+	this.session.Set(Sprintf("UserAuth:%d", user.Id), userencode)
+
+	aes, _ := plugin.AesEncrypt(Sprintf("%d-%d", user.Id, user.LoginTime))
+	this.c.SetCookie("ticket", string(user.Id)+","+string(aes), 86400, "", "", false, false)
 }
 
 func (this *IndexSt) Self() string {

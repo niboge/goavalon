@@ -5,10 +5,9 @@ import (
 	"avalon/app/model"
 	"avalon/util"
 
-	"github.com/gin-gonic/gin"
 	"net/http"
 
-	"github.com/astaxie/beego/session"
+	"avalon/plugin"
 	"github.com/gorilla/websocket"
 
 	"container/list"
@@ -17,11 +16,20 @@ import (
 
 	. "fmt"
 	"log"
-	"os"
+	"net/url"
+	// "os"
 )
 
+// var redis plugin.RedisNew("")
+var manager = ClientManager{
+	broadcast:  make(chan []byte),
+	register:   make(chan *Client),
+	unregister: make(chan *Client),
+	clients:    map[string]map[string]*Client{},
+}
+
 func init() {
-	CreteRoom("tes", 12)
+	CreteRoom("main", 12)
 	go manager.roomMaster()
 }
 
@@ -52,13 +60,6 @@ type Message struct {
 	Content   string `json:"content,omitempty"`
 }
 
-var manager = ClientManager{
-	broadcast:  make(chan []byte),
-	register:   make(chan *Client),
-	unregister: make(chan *Client),
-	clients:    map[string]map[string]*Client{},
-}
-
 func CreteRoom(roomName string, roomSize int) *handle.RoomSt {
 	dismissVote := util.NewVote() // 反对票仓
 	agreeVote := util.NewVote()   // 同意票仓
@@ -83,12 +84,8 @@ func WebsocketLoop(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := globalSession.SessionStart(w, r)
-	if err != nil {
-		panic("[Error] !! 503 session fail!")
-	}
-
-	user := session.Get("UserAuth")
+	// user auth
+	user := _auth(r)
 	if user == nil {
 		jsonMessage, _ := json.Marshal(&Message{Content: "/A socket has disconnected.no auth"})
 		conn.WriteMessage(websocket.CloseMessage, jsonMessage)
@@ -98,11 +95,23 @@ func WebsocketLoop(w http.ResponseWriter, r *http.Request) {
 
 	// go room
 	r.ParseForm()
-	client := &Client{id: Sprintf("%s", user.(model.UserSt).Id), user: user.(model.UserSt), roomName: r.Form.Get("roomName"), socket: conn, send: make(chan []byte)}
+	client := &Client{id: Sprintf("%s", user.Id), user: *user, roomName: r.Form.Get("roomName"), socket: conn, send: make(chan []byte)}
 	manager.register <- client
 
 	go client.read()
 	go client.write()
+}
+
+func _auth(r *http.Request) (user *model.UserSt) {
+	cookie, err := r.Cookie("ticket")
+	if err != nil {
+		return nil
+	}
+
+	ticket, _ := url.QueryUnescape(cookie.Value)
+	user = plugin.UserAuth(ticket)
+
+	return user
 }
 
 func (manager *ClientManager) roomMaster() {
@@ -114,7 +123,7 @@ func (manager *ClientManager) roomMaster() {
 			manager.sendRoom(jsonMessage, conn.roomName)
 		case conn := <-manager.unregister:
 			if a, ok := manager.clients[conn.roomName]; ok {
-				delete(manager.clients[conn.roomName], conn.id)
+				manager.rmClient(conn.roomName, conn.id)
 				jsonMessage, _ := json.Marshal(&Message{Content: "[" + conn.user.NickName + "]离开了房间!"})
 				manager.sendRoom(jsonMessage, conn.roomName)
 			}
@@ -159,7 +168,6 @@ func (c *Client) read() {
 		_, message, err := c.socket.ReadMessage()
 		if err != nil {
 			c.socket.Close()
-			manager.unregister <- c
 			break
 		}
 		jsonMessage, _ := json.Marshal(&Message{Sender: c.id, Content: string(message)})
@@ -191,4 +199,8 @@ func (this *ClientManager) addClient(room string, c *Client) {
 	}
 
 	this.clients[room][c.id] = c
+}
+
+func (this *ClientManager) rmClient(room string, c *Client) {
+	delete(this.clients[room], c.id)
 }
