@@ -108,7 +108,11 @@ func _auth(r *http.Request) (user *model.UserSt) {
 		return nil
 	}
 
-	ticket, _ := url.QueryUnescape(cookie.Value)
+	ticket, err := url.QueryUnescape(cookie.Value)
+	if err != nil {
+		return nil
+	}
+
 	user = plugin.UserAuth(ticket)
 
 	return user
@@ -122,7 +126,7 @@ func (manager *ClientManager) roomMaster() {
 			jsonMessage, _ := json.Marshal(&Message{Content: "[" + conn.user.NickName + "]进入了房间!"})
 			manager.sendRoom(jsonMessage, conn.roomName)
 		case conn := <-manager.unregister:
-			if a, ok := manager.clients[conn.roomName]; ok {
+			if _, ok := manager.clients[conn.roomName]; ok {
 				manager.rmClient(conn.roomName, conn.id)
 				jsonMessage, _ := json.Marshal(&Message{Content: "[" + conn.user.NickName + "]离开了房间!"})
 				manager.sendRoom(jsonMessage, conn.roomName)
@@ -201,6 +205,6 @@ func (this *ClientManager) addClient(room string, c *Client) {
 	this.clients[room][c.id] = c
 }
 
-func (this *ClientManager) rmClient(room string, c *Client) {
-	delete(this.clients[room], c.id)
+func (this *ClientManager) rmClient(room string, cid string) {
+	delete(this.clients[room], cid)
 }

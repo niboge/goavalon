@@ -1,5 +1,5 @@
 hash: 6253f1aa6fe8d14676a4d3b8050cb86dff52f4c248344a2e9d7e585821698fbc
-updated: 2018-04-28T15:04:51.282748351+08:00
+updated: 2019-04-08T17:47:43.964134457+08:00
 imports:
 - name: github.com/astaxie/beego
   version: bf5c5626ab429e66d88602e1ab1ab5fbf4629a01
@@ -14,61 +14,78 @@ imports:
   - toolbox
   - utils
 - name: github.com/beatrichartz/martini-sockets
-  version: 3eafc7b6445cc1405ff4911e1c5bca4878540eba
+  version: fb820629a6d32059875e5338763c392b3cf3470d
 - name: github.com/codegangsta/inject
-  version: 33e0aa1cb7c019ccc3fbe049a8262a6403d30504
+  version: 37d7f8432a3e684eef9b2edece76bdfa6ac85b39
 - name: github.com/garyburd/redigo
   version: d1ed5c67e5794de818ea85e6b522fda02623a484
   subpackages:
   - redis
 - name: github.com/gin-contrib/sse
-  version: 22d885f9ecc78bf4ee5d72b937e4bbcdc58e8cae
+  version: 5545eab6dad3bbbd6c5ae9186383c2a9d23c0dae
 - name: github.com/gin-gonic/gin
-  version: 2282be059be78f9f7f70a72ca4dd3bcfe5f972ee
+  version: b869fe1415e4b9eb52f247441830d502aece2d4d
   subpackages:
   - binding
   - json
   - render
 - name: github.com/go-martini/martini
-  version: 22fa46961aabd2665cf3f1343b146d20028f5071
+  version: 49411a5b646861ad29a6ddd5351717a0a9c49b94
+- name: github.com/go-playground/locales
+  version: f63010822830b6fe52288ee52d5a1151088ce039
+  subpackages:
+  - currency
+- name: github.com/go-playground/universal-translator
+  version: b32fa301c9fe55953584134cb6853a13c87ec0a1
 - name: github.com/go-sql-driver/mysql
-  version: a0583e0143b1624142adab07e0e97fe106d99561
+  version: 72cd26f257d44c1114970e19afddcd812016007e
 - name: github.com/go-xorm/builder
-  version: bad0a612f0d6277b953910822ab5dfb30dd18237
+  version: 1d658d7596c25394aab557ef5b50ef35bf706384
 - name: github.com/go-xorm/core
-  version: f43c33d9a48db006417a7ac4c16b08897e3e1458
+  version: ccc80c1adf1f6172bbc548877f50a1163041a40a
 - name: github.com/go-xorm/xorm
-  version: d966376e446dc01b234cb7c8db28c256c3944498
+  version: 1f39c590c64924f358c0d89016ac9b2bb84e9125
 - name: github.com/golang/protobuf
-  version: e09c5db296004fbe3f74490e84dcd62c3c5ddb1b
+  version: b5d812f8a3706043e23a9cd5babf2e5423744d30
   subpackages:
   - proto
+- name: github.com/gomodule/redigo
+  version: 9c11da706d9b7902c6da69c592f75637793fe121
+  subpackages:
+  - internal
+  - redis
 - name: github.com/gorilla/websocket
-  version: 21ab95fa12b9bdd8fecf5fa3586aad941cc98785
+  version: 66b9c49e59c6c48f0ffce28c2d8b8a5678502c6d
 - name: github.com/json-iterator/go
-  version: 2ddf6d758266fcb080a4f9e054b9f292c85e6798
+  version: 0ff49de124c6f76f8494e194af75bde0f1a49a29
+- name: github.com/leodido/go-urn
+  version: 70078a794e8ea4b497ba7c19a78cd60f90ccf0f4
 - name: github.com/mattn/go-isatty
-  version: 6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c
+  version: c2a7a6ca930a4cd0bc33a3f298eb71960732a3a7
 - name: github.com/mattn/go-sqlite3
-  version: a72efd674f654961a11ac41aae72c0e43963fe6c
+  version: c7c4067b79cc51e6dfdcef5c702e74b1e0fa7c75
 - name: github.com/modern-go/concurrent
   version: bacd9c7ef1dd9b15be4a9909b8ac7a4e313eec94
 - name: github.com/modern-go/reflect2
-  version: 05fbef0ca5da472bbf96c9322b84a53edc03c9fd
+  version: 4b7aa43c6742a2c18fdef89dd197aaae7dac7ccd
 - name: github.com/ugorji/go
-  version: f3cacc17c85ecb7f1b6a9e373ee85d1480919868
+  version: 8fd0f8d918c8f0b52d0af210a812ba882cc31a1e
   subpackages:
   - codec
 - name: golang.org/x/net
-  version: 5f9ae10d9af5b1c89ae6904293b14b064d4ada23
+  version: eb5bcb51f2a31c7d5141d810b70815c05d9c9146
   subpackages:
   - context
 - name: golang.org/x/sys
-  version: cbbc999da32df943dac6cd71eb3ee39e1d7838b9
+  version: 4b34438f7a67ee5f45cc6132e2bad873a20324e9
   subpackages:
   - unix
+- name: google.golang.org/appengine
+  version: 54a98f90d1c46b7731eb8fb305d2a321c30ef610
+  subpackages:
+  - cloudsql
 - name: gopkg.in/go-playground/validator.v8
-  version: 5f1438d3fca68893a817e4a66806cea46a9e4ebf
+  version: 46b4b1e301c24cac870ffcb4ba5c8a703d1ef475
 - name: gopkg.in/yaml.v2
-  version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
+  version: 51d6538a90f86fe93ac480b35f37b2be17fef232
 testImports: []

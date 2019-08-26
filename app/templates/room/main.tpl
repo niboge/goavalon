@@ -29,7 +29,8 @@
 	<div class="row-fluid">
       <a href="#form_cfg" data-toggle="collapse" class="btn btn-primary" style="margin-top:-10%;margin-bottom:-15%">修改配置</a><hr />
 
-      <form id="form_cfg" class="collapse" method="post" action="/room/InceptionSpace">
+      <form id="form_cfg" class="collapse" onsubmit="return subCfg();">
+        <input name="roomid" class="hide" value={{.data.Id}} >
         <li>游戏类型</li>
         <select name="type" class="selectpicker" data-style="btn-info">
         	<option value=1>狼人杀</option>
@@ -37,20 +38,29 @@
         </select>
         <li>本局主题</li>
         <input name="notice" class="form-control" required autofocus value={{.data.Notice}}>
+        
         <li style="color:#AA1010">普通狼个数</li>
-        <input name="wolf" class="form-control"
-        placeholder="3">
+        <input name="wolf" class="form-control"  value="3">
         <li style="color:red">白狼王个数</li>
-        <input name="wolf_white" class="form-control"
-        placeholder="0">
+        <input name="wolf_white" class="form-control"  value="0">
+        <li style="color:pink">狼美人个数</li>
+        <input name="wolf_beauty" class="form-control"  value="0" disabled="disabled">
+        
         <li style="color:#0010A0">普村个数</li>
-        <input name="wolf_white" class="form-control"
-        placeholder="3">
+        <input name="famer" class="form-control"  value="3">
         <li style="color:#0010FF">神职</li>
-        <input type="checkbox" name="check1" value="check1" checked="checked"/>预言家
-        <input type="checkbox" name="check2" value="check2" checked="checked"/>女巫 
-        <input type="checkbox" name="check3" value="check3" checked="checked"/>猎人
-        <input type="checkbox" name="check4" value="check4" />白吃
+        <input type="checkbox" name="check_prophet" value="1" checked="checked" />预言家
+        <input type="checkbox" name="check_witch" value="1" checked="checked" />女巫 
+        <input type="checkbox" name="check_hunter" value="1" checked="checked" />猎人
+        <input type="checkbox" name="check_idiot" value="1" checked="checked" />白痴
+        <input type="checkbox" name="check_guard" value="1" />守卫
+        <input type="checkbox" name="check_magician" value="1" disabled="disabled" />魔术师
+        <li style="color:#0010FF">技能平衡调节</li>
+        <div>女巫: &nbsp;
+          <input name="self_rescue" type="radio" value="0" />可自救
+          <input name="self_rescue" type="radio" value="1" />第一晚可自救
+          <input name="self_rescue" type="radio" value="2" />不可自救
+        </div>
         <button class="btn btn-block btn-primary" type="submit" style="margin-top: 20px;">提交</button>
       </form>
 	</div>
@@ -79,5 +89,22 @@
 
 
 <!-- 脚本.加人 -->
+
+<script type="text/javascript">
+  var ajax_option = {
+    url : "/room/InceptionSpace",
+    type: "post",
+    dataType: "json",
+    success : function(message) {
+      console.log(message)
+    },
+  }
+
+  //提交职阶配置
+  function subCfg() {  
+      $("#form_cfg").ajaxSubmit(ajax_option);
+      return true;//必须返回false
+  }
+</script>
 
 {{end}}

@@ -7,7 +7,7 @@ import (
 
 	"avalon/app/model"
 
-	. "fmt"
+//	. "fmt"
 )
 
 const PROJECT_NAME = "avalon"
@@ -22,7 +22,7 @@ func main() {
 
 	Route(r)
 
-	r.Run("haibo.com:8080") // listen and serve on 0.0.0.0:8080
+	r.Run("shikii.cc:80") // listen and serve on 0.0.0.0:8080
 }
 
 func Route(router *gin.Engine) {
@@ -60,7 +60,7 @@ func Route(router *gin.Engine) {
 	{
 		group.GET("", handle.Room.List)
 		group.GET("/in:roomName", handle.Room.Game)
-		group.POST("/room/InceptionSpace", handle.Room.InitRoomGame)
+		group.POST("/InceptionSpace", handle.Room.InitRoomGame)
 	}
 }
 

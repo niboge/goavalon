@@ -40,13 +40,19 @@ func (this *BaseSt) BeforeHandle(c *gin.Context) {
 
 	// auth cookie
 	if this.auth != false {
-		ticket, _ := this.c.Cookie("ticket")
+		ticket, err := this.c.Cookie("ticket")
+		if err != nil {
+			this.setRetCode(-401).failPage("auth valid!")
+			return
+		}
+
 		user := plugin.UserAuth(ticket)
 		if user == nil {
 			this.setRetCode(-401).failPage("auth valid!")
-		} else {
-			this.user = user
+			return
 		}
+
+		this.user = user
 	}
 
 }
@@ -90,7 +96,7 @@ func (this *BaseSt) succ(data interface{}, tpl_name string) {
 
 	this.Data["data"] = data
 
-	fmt.Printf("\n respons INFO: %V %v \n", data)
+	fmt.Printf("\n respons INFO: %+v \n", data)
 
 	if tpl_name == "" {
 		this.c.JSON(http.StatusOK, this.Data)

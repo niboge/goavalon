@@ -49,7 +49,7 @@ func (this *Redis) Exec(cmd string, key string, args ...interface{}) (interface{
 		return nil, execErr
 	}
 
-	log.Println("geego-redis:exec: ", cmd, params, ret)
+	log.Println("geego-redis:exec: ", cmd, params)
 
 	return ret, nil
 }

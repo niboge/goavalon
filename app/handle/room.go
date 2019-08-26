@@ -5,11 +5,12 @@ import (
 	"math/rand"
 	"sync"
 
-	"log"
-	"fmt"
+	"avalon/app/logic"
 	"avalon/app/model"
 	"avalon/util"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
 	// "log"
 	// . "fmt"
 )
@@ -28,9 +29,9 @@ type RoomSt struct {
 	GameNum       int                // 房间当前局数
 	GoodManWins   int                // 抵抗组织成员获胜局数
 	BadGuysWins   int                // 间谍成员获胜局数
-	TurnsTalkList *list.List 		 // 轮流发言链表
-	DisVote       *util.VoteSet           // 反对票仓
-	AgrVote       *util.VoteSet           // 赞成票仓
+	TurnsTalkList *list.List         // 轮流发言链表
+	DisVote       *util.VoteSet      // 反对票仓
+	AgrVote       *util.VoteSet      // 赞成票仓
 	Captains      []string           // 队长链表
 	Clients       map[string]*Client // 客户端管理池
 	BaseSt
@@ -54,7 +55,7 @@ func (this *RoomSt) Game(context *gin.Context) {
 	}()
 
 	name := this.c.Param("roomName")
-	room := model.Room.FindFirst( model.ModelCond{Where:"name=?", Bind:name})
+	room := model.Room.FindFirst(model.ModelCond{Where: "name=?", Bind: name})
 
 	if room.Id == 0 {
 		panic("no this room")
@@ -70,9 +71,8 @@ func (this *RoomSt) Game(context *gin.Context) {
 // 	}
 
 // 	// for _, room := range rooms {
-		
-// 	// }
 
+// 	// }
 
 // 	dismissVote := NewVote()   // 反对票仓
 // 	agreeVote := NewVote()     // 同意票仓
@@ -90,35 +90,58 @@ func (this *RoomSt) Game(context *gin.Context) {
 // }
 
 // 初始化游戏信息
-func (room *RoomSt) InitRoomGame() {
-	// 随机选择队长
-	captaignsName, _ := room.TakeRandCaptains()
+func (this *RoomSt) InitRoomGame(context *gin.Context) {
+	// param
+	param := map[string]string{}
+	param["gametype"] = this.c.PostForm("type")
+	param["notice"] = this.c.PostForm("notice")
 
-	badManList := []string{}
+	param["wolf"] = this.c.PostForm("wolf")
+	param["wolf_white"] = this.c.PostForm("wolf_white")
+	param["wolf_beauty"] = this.c.PostForm("wolf_beauty")
+
+	param["famer"] = this.c.PostForm("famer")
+	param["prophet"] = this.c.PostForm("check_prophet")
+	param["witch"] = this.c.PostForm("check_witch")
+	param["hunter"] = this.c.PostForm("check_hunter")
+	param["idiot"] = this.c.PostForm("check_idiot")
+	param["guard"] = this.c.PostForm("check_guard")
+
+	param["self_rescue"] = this.c.PostForm("self_rescue")
+
+	roomid := this.c.PostForm("roomid")
+
+	//更新缓存
+	logic.NewRoom(roomid).AlterCfg(param)
+
+	//发送通知
+
+	// badManList := []string{}
+
 	// 分配坏蛋
-	clientList := room.ClientNameList()
-	// 初始化信息
-	msg := &Message{From: "SYSTEM", EventName: "INIT"}
-	for i := 0; i <= 2; i++ {
-		point := rand.Intn(len(clientList))
-		badManList = append(badManList, clientList[point])
-		clientList = append(clientList[:point], clientList[point+1:]...)
-	}
-	// 根据分配选择给各个客户端返回信息
-	for cliName, cli := range room.Clients {
-		for badmanpoint := range badManList {
-			if cliName == badManList[badmanpoint] {
-				msg.RoleInfo.Role = "BADMAN"
-				msg.RoleInfo.Captain = captaignsName
-				msg.TeamList = badManList
-				cli.out <- msg
-			} else {
-				msg.RoleInfo.Role = "GOODMAN"
-				msg.RoleInfo.Captain = captaignsName
-				cli.out <- msg
-			}
-		}
-	}
+	// clientList := room.ClientNameList()
+	// // 初始化信息
+	// msg := &Message{From: "SYSTEM", EventName: "INIT"}
+	// for i := 0; i <= 2; i++ {
+	// 	point := rand.Intn(len(clientList))
+	// 	badManList = append(badManList, clientList[point])
+	// 	clientList = append(clientList[:point], clientList[point+1:]...)
+	// }
+	// // 根据分配选择给各个客户端返回信息
+	// for cliName, cli := range room.Clients {
+	// 	for badmanpoint := range badManList {
+	// 		if cliName == badManList[badmanpoint] {
+	// 			msg.RoleInfo.Role = "BADMAN"
+	// 			msg.RoleInfo.Captain = captaignsName
+	// 			msg.TeamList = badManList
+	// 			cli.out <- msg
+	// 		} else {
+	// 			msg.RoleInfo.Role = "GOODMAN"
+	// 			msg.RoleInfo.Captain = captaignsName
+	// 			cli.out <- msg
+	// 		}
+	// 	}
+	// }
 }
 
 // 添加房间客户端
@@ -148,7 +171,7 @@ func (room *RoomSt) AddClient(clientName string, client *Client) bool {
 			cli.out <- readMsg
 		}
 		// 初始化第一局游戏的信息
-		room.InitRoomGame()
+		// room.InitRoomGame()
 		return true
 	} else if len(room.ClientNameList()) == room.RoomSize {
 		startMsg := &Message{From: "SYSTEM", EventName: "Start", Body: ""}
