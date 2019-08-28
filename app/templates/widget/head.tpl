@@ -13,7 +13,7 @@
 <script type="text/javascript">
     var _HOST = 'shikii.cc';
     if( window.location.host.indexOf(':') > 0) {
-        _HOST = 'www.shikii.cc:8080';
+        _HOST = 'www.shikii.cc:8011';
     }
 
 

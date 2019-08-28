@@ -65,9 +65,9 @@ func (this *IndexSt) Login(context *gin.Context) {
 		uname := this.c.PostForm("username")
 		pwd := this.c.PostForm("password")
 
-		ok, user := model.User.FindFirst(model.ModelCond{Where: "account=?", Bind: uname})
+		user,ok := model.User.FindFirst(model.ModelCond{Where: "account = ?", Bind: []string{uname}})
 		if ok && user.Pwd == pwd {
-			this.sendTicket(&user)
+			this.sendTicket(user)
 			this.c.Redirect(302, "/user")
 		} else {
 			this.setRetMsg("error pwd or account").succ(nil, "login.tpl")

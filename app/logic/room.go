@@ -1,8 +1,10 @@
 package logic
 
 import (
+	"avalon/app/model"
 	"avalon/plugin"
-//	"fmt"
+	"fmt"
+	//	"fmt"
 	"strconv"
 )
 
@@ -17,8 +19,8 @@ type RoomCfg struct {
 	wolf_white  int
 	wolf_beauty int
 
-	//famer
-	famer    int
+	//farmer
+	farmer    int
 	prophet  bool
 	witch    bool
 	hunter   bool
@@ -26,7 +28,7 @@ type RoomCfg struct {
 	idiot    bool
 	magician bool
 
-	// skill
+	// skill adjust
 	self_rescue int //0 可自救 1第一天自救 2不可
 }
 
@@ -41,12 +43,14 @@ func NewRoom(roomid string) (logic *RoomLogic) {
 	return logic
 }
 
-func (this *RoomLogic) AlterCfg(param map[string]string) bool {
-	famer, _ := strconv.Atoi(param["famer"])
+func (this *RoomLogic) AlterCfg(param map[string]string, uid int) bool {
+	roomid := param["id"]
+
+	farmer, _ := strconv.Atoi(param["farmer"])
 	wolf, _ := strconv.Atoi(param["wolf"])
 	self_rescue, _ := strconv.Atoi(param["self_rescue"])
 
-	if famer < 1 || famer > 5 {
+	if farmer < 1 || farmer > 5 {
 		return false
 	}
 	if wolf < 1 || wolf > 5 {
@@ -60,14 +64,15 @@ func (this *RoomLogic) AlterCfg(param map[string]string) bool {
 		this.notice = param["notice"]
 	}
 
-	this.gametype = 1
+	this.gametype = 1 //狼人杀
+	this.gametype = 2 //阿瓦隆
 
 	this.self_rescue = self_rescue
 	this.wolf = wolf
 	this.wolf_white, _ = strconv.Atoi(param["wolf_white"])
 	this.wolf_beauty, _ = strconv.Atoi(param["wolf_beauty"])
 
-	this.famer = famer
+	this.farmer = farmer
 	this.prophet, _ = strconv.ParseBool(param["prophet"])
 	this.witch, _ = strconv.ParseBool(param["witch"])
 	this.hunter, _ = strconv.ParseBool(param["hunter"])
@@ -76,7 +81,11 @@ func (this *RoomLogic) AlterCfg(param map[string]string) bool {
 	this.magician, _ = strconv.ParseBool(param["magician"])
 
 	// to redis
-	session.Set("Room:"+this.id, this)
+	session.Set("Room:"+this.id, this.RoomCfg)
 
-	return true
+	return model.Room.Modify(fmt.Sprintf("id=%d AND owner=%d",roomid,uid), param)
+}
+
+func _formatParam(param map[string]string) {
+
 }

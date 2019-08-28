@@ -92,6 +92,9 @@ func UserAuth(ticket string) (user *model.UserSt) {
 	// get user from session
 	split = strings.Split(ticket, "-")
 	res, _ := session.Get("UserAuth:" + string(split[0]))
+	if res == nil {
+		return nil
+	}
 
 	user = new(model.UserSt)
 	if jsonErr := json.Unmarshal(res.([]byte), user); jsonErr != nil {

@@ -1,7 +1,6 @@
 package db
 
 import (
-	"log"
 	"time"
 )
 
@@ -18,33 +17,33 @@ type User struct {
 func (this *User) GetUserByOpenId(openID string) (*User, bool) {
 	// 根据微信的openId获得用户已经注册的用户信息
 	user := &User{OpenID: openID}
-	has, err := orm.Get(user)
-	if err != nil {
-		log.Panic(err)
-	}
-	return user, has
+	//has, err := model.Engine.Get("")
+	//if err != nil {
+	//	log.Panic(err)
+	//}
+	return user, true
 }
 
 func (this *User) Insert() bool {
-	_, err := orm.InsertOne(this)
-	if err != nil {
-		log.Panic(err)
-	}
+	//_, err := orm.InsertOne(this)
+	//if err != nil {
+	//	log.Panic(err)
+	//}
 	return true
 }
 
 func (this *User) Delete() bool {
-	_, err := orm.Delete(this)
-	if err != nil {
-		log.Panic(err)
-	}
+	//_, err := orm.Delete(this)
+	//if err != nil {
+	//	log.Panic(err)
+	//}
 	return true
 }
 
 func (this *User) Update() bool {
-	_, err := orm.Id(this.Id).Update(this)
-	if err != nil {
-		log.Panic(err)
-	}
+	//_, err := orm.Id(this.Id).Update(this)
+	//if err != nil {
+	//	log.Panic(err)
+	//}
 	return true
 }

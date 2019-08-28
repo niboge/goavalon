@@ -3,6 +3,7 @@ package handle
 import (
 	"container/list"
 	"math/rand"
+	"strconv"
 	"sync"
 
 	"avalon/app/logic"
@@ -38,10 +39,8 @@ type RoomSt struct {
 }
 
 func (this *RoomSt) List(context *gin.Context) {
-	rooms := model.Room.Find(true)
-	if rooms == nil {
-		panic("no  room")
-	}
+
+	rooms,_ := model.Room.Find("status=1")
 
 	this.succ(rooms, "room.tpl")
 }
@@ -54,10 +53,9 @@ func (this *RoomSt) Game(context *gin.Context) {
 		}
 	}()
 
-	name := this.c.Param("roomName")
-	room := model.Room.FindFirst(model.ModelCond{Where: "name=?", Bind: name})
-
-	if room.Id == 0 {
+	id,_ := strconv.Atoi(this.c.Param("roomId"))
+	room,ok := model.Room.FindFirst(id)
+	if !ok {
 		panic("no this room")
 	}
 
@@ -100,19 +98,26 @@ func (this *RoomSt) InitRoomGame(context *gin.Context) {
 	param["wolf_white"] = this.c.PostForm("wolf_white")
 	param["wolf_beauty"] = this.c.PostForm("wolf_beauty")
 
-	param["famer"] = this.c.PostForm("famer")
+	param["farmer"] = this.c.PostForm("farmer")
 	param["prophet"] = this.c.PostForm("check_prophet")
 	param["witch"] = this.c.PostForm("check_witch")
 	param["hunter"] = this.c.PostForm("check_hunter")
 	param["idiot"] = this.c.PostForm("check_idiot")
 	param["guard"] = this.c.PostForm("check_guard")
+	param["magician"] = this.c.PostForm("check_magician")
 
 	param["self_rescue"] = this.c.PostForm("self_rescue")
 
-	roomid := this.c.PostForm("roomid")
+	param["id"] = this.c.PostForm("roomid")
 
 	//更新缓存
-	logic.NewRoom(roomid).AlterCfg(param)
+	room := new(logic.RoomLogic)
+	ok := room.AlterCfg(param, this.user.Id)
+	if !ok {
+		this.fail("房间修改失败!")
+	}
+
+	this.succ(nil, "")
 
 	//发送通知
 

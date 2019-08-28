@@ -2,6 +2,7 @@ package main
 
 import (
 	"avalon/app/handle"
+	"github.com/astaxie/beego"
 	"github.com/gin-gonic/gin"
 	"net/http"
 
@@ -13,16 +14,20 @@ import (
 const PROJECT_NAME = "avalon"
 
 func init() {
-	model.Register()
+	model.Init()
 }
 
 func main() {
+	defer func() {
+		model.Engine.Close()
+	}()
+
 	gin.SetMode(gin.DebugMode)
 	r := gin.Default()
 
 	Route(r)
 
-	r.Run("shikii.cc:80") // listen and serve on 0.0.0.0:8080
+	r.Run("shikii.cc:" + beego.AppConfig.String("httpport")) // listen and serve on 0.0.0.0:8080
 }
 
 func Route(router *gin.Engine) {
@@ -59,7 +64,7 @@ func Route(router *gin.Engine) {
 	group = router.Group("/room", middelware(&handle.Room))
 	{
 		group.GET("", handle.Room.List)
-		group.GET("/in:roomName", handle.Room.Game)
+		group.GET("/in:roomId", handle.Room.Game)
 		group.POST("/InceptionSpace", handle.Room.InitRoomGame)
 	}
 }

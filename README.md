@@ -6,9 +6,7 @@
 2 nohup
 
 ## How To buld
-`glide install`
-
-`glide up`
+`go mod vendor`
 
 `go build`
 

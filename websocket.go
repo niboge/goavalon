@@ -4,6 +4,7 @@ import (
 	"avalon/app/handle"
 	"avalon/app/model"
 	"avalon/util"
+	"github.com/astaxie/beego/logs"
 
 	"net/http"
 
@@ -14,8 +15,7 @@ import (
 	"encoding/json"
 	"sync"
 
-	. "fmt"
-	"log"
+	"fmt"
 	"net/url"
 	// "os"
 )
@@ -77,25 +77,33 @@ func CreteRoom(roomName string, roomSize int) *handle.RoomSt {
 }
 
 func WebsocketLoop(w http.ResponseWriter, r *http.Request) {
+	//user auth
+	user := _auth(r)
+	if user == nil {
+		//http.Error(w,"auth fail!", 401)
+		//return
+	}
+	//websocket update
 	conn, error := Upgrader.Upgrade(w, r, nil)
 	if error != nil {
-		log.Fatal("Connect Websocket Fail!", error)
-		http.NotFound(w, r)
+		logs.Warning("Connect Websocket Fail!", error)
+		http.Error(w,"sys fail!", 500)
 		return
 	}
 
-	// user auth
-	user := _auth(r)
-	if user == nil {
-		jsonMessage, _ := json.Marshal(&Message{Content: "/A socket has disconnected.no auth"})
-		conn.WriteMessage(websocket.CloseMessage, jsonMessage)
-		conn.Close()
-		return
-	}
+	//defer func() {
+	//	if err := recover(); err!=nil {
+	//		jsonMessage, _ := json.Marshal(&Message{Content: Sprintf("/A socket has disconnected. err:%v",err)})
+	//		conn.WriteMessage(websocket.CloseMessage, jsonMessage)
+	//		conn.Close()
+	//		log.Print(err)
+	//		return
+	//	}
+	//}()
 
 	// go room
 	r.ParseForm()
-	client := &Client{id: Sprintf("%s", user.Id), user: *user, roomName: r.Form.Get("roomName"), socket: conn, send: make(chan []byte)}
+	client := &Client{id: fmt.Sprintf("%s", user.Id), user: *user, roomName: r.Form.Get("roomName"), socket: conn, send: make(chan []byte)}
 	manager.register <- client
 
 	go client.read()

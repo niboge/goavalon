@@ -2,9 +2,8 @@ package model
 
 import (
 	// "github.com/astaxie/beego"
-	Orm "github.com/astaxie/beego/orm"
-	_ "github.com/go-sql-driver/mysql"
 
+	"errors"
 	. "fmt"
 )
 
@@ -12,13 +11,12 @@ var User *UserSt
 
 func init() {
 	User = new(UserSt)
-	Orm.RegisterModel(User)
 	User.tableName = "user"
 }
 
 type UserSt struct {
 	Base
-	Id        int    `json:"Id"`
+	//Id        int    `json:"Id"`
 	Account   string `json:"Account"`
 	NickName  string `json:"NickName"`
 	Avatar    string `json:"Avatar"`
@@ -36,19 +34,24 @@ func (this *UserSt) TableName() string {
 	return "user"
 }
 
-func (this *UserSt) FindFirst(cond interface{}) (bool, UserSt) {
+func (this *UserSt) FindFirst(cond interface{}) (*UserSt, bool) {
 	var res UserSt
 
-	err := this.Base.FindFirst(cond).QueryRow(&res)
+	err := this.Base.FindFirst(cond).Find(&res).Error
 
-	return err == nil, res
+	return &res, err == nil
 }
 
-func (this *UserSt) Save(cond interface{}) (int, error) {
-	user := new(UserSt)
-	user.NickName = "海波"
-	id, err := orm.Insert(user)
-	Printf("%V %V \n", id, err)
+func (this *UserSt) Insert(data *UserSt) (int, error) {
+	ok := this.Create(&data)
+	if !ok {
+		return 0, errors.New("user.Save fail")
+	}
+	Printf("user.Save: %+v \n", data)
 
-	return int(id), err
+	return data.Id, nil
+}
+
+func (this *UserSt) Update(cond interface{}, data map[string]interface{}) bool {
+	return this.Modify(cond, data)
 }

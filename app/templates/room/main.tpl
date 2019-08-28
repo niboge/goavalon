@@ -47,7 +47,7 @@
         <input name="wolf_beauty" class="form-control"  value="0" disabled="disabled">
         
         <li style="color:#0010A0">普村个数</li>
-        <input name="famer" class="form-control"  value="3">
+        <input name="farmer" class="form-control"  value="3">
         <li style="color:#0010FF">神职</li>
         <input type="checkbox" name="check_prophet" value="1" checked="checked" />预言家
         <input type="checkbox" name="check_witch" value="1" checked="checked" />女巫 
@@ -55,12 +55,14 @@
         <input type="checkbox" name="check_idiot" value="1" checked="checked" />白痴
         <input type="checkbox" name="check_guard" value="1" />守卫
         <input type="checkbox" name="check_magician" value="1" disabled="disabled" />魔术师
-        <li style="color:#0010FF">技能平衡调节</li>
+
+        <li style="color:#0010FF">平衡性调节</li>
         <div>女巫: &nbsp;
           <input name="self_rescue" type="radio" value="0" />可自救
           <input name="self_rescue" type="radio" value="1" />第一晚可自救
           <input name="self_rescue" type="radio" value="2" />不可自救
         </div>
+
         <button class="btn btn-block btn-primary" type="submit" style="margin-top: 20px;">提交</button>
       </form>
 	</div>

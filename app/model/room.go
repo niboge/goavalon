@@ -1,11 +1,11 @@
 package model
 
 import (
-	// "github.com/astaxie/beego"
-	Orm "github.com/astaxie/beego/orm"
-	_ "github.com/go-sql-driver/mysql"
+	"errors"
+	"fmt"
 
-	. "fmt"
+	// "github.com/astaxie/beego"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var Room *RoomSt
@@ -13,13 +13,12 @@ var RoomArr []RoomSt
 
 func init() {
 	Room = new(RoomSt)
-	Orm.RegisterModel(Room)
 	Room.tableName = "room"
 }
 
 type RoomSt struct {
 	Base
-	Id          int
+	//Id          int
 	Name        string
 	Password    string
 	Avatar      string
@@ -28,7 +27,7 @@ type RoomSt struct {
 	IsLocked    int
 	CreatedTime string
 	UpdatedTime string
-	Owner       string
+	Owner       int
 	Notice      string
 	Type        int
 	// Profile *Profile `orm:"rel(one)"` // OneToOne relation
@@ -38,25 +37,32 @@ func (this *RoomSt) TableName() string {
 	return "room"
 }
 
-func (this *RoomSt) FindFirst(cond interface{}) RoomSt {
+func (this *RoomSt) FindFirst(cond interface{}) (*RoomSt, bool) {
 	var res RoomSt
 
-	this.Base.FindFirst(cond).QueryRow(&res)
+	err := this.Base.FindFirst(cond).Find(&res).Error
 
-	return res
+	return &res, err == nil
 }
 
-func (this *RoomSt) Find(cond interface{}) interface{} {
-	raw := this.Base.Find(cond)
-	raw.QueryRows(&RoomArr)
-	return RoomArr
+func (this *RoomSt) Find(cond interface{}) ([]RoomSt, bool) {
+	res := make([]RoomSt, 1)
+
+	err := this.Base.FindAll(cond).Find(&res)
+
+	return res, err != nil
 }
 
-func (this *RoomSt) Save(cond interface{}) (int, error) {
-	user := new(RoomSt)
-	user.Name = "Saber圣杯战争"
-	id, err := orm.Insert(user)
-	Printf("%V %V \n", id, err)
+func (this *RoomSt) Insert(data *RoomSt) (int, error) {
+	ok := this.Create(&data)
+	if !ok {
+		return 0, errors.New("Room.Save fail")
+	}
+	fmt.Printf("Room.Save: %+v \n", data)
 
-	return int(id), err
+	return data.Id, nil
+}
+
+func (this *RoomSt) Update(cond interface{}, data map[string]interface{}) bool {
+	return this.Base.Modify(cond, data)
 }
